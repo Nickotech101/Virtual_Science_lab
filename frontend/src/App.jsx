@@ -11,15 +11,17 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/biology/*" element={<Biology />} />
         <Route path="/chemistry/*" element={<Chemistry />} />
         <Route path="/physics/*" element={<Physics />} />
       </Routes>
+
+      <Ask />
     </BrowserRouter>
-    <Ask />;
   );
 }
-export default App;
+
 export default App;

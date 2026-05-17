@@ -1,42 +1,109 @@
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useState } from "react";
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav
       style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "16px 24px",
-        borderBottom: "1px solid #e5e7eb",
+        padding: "16px 20px",
+        flexWrap: "wrap",
+        gap: "12px",
+        background:
+          theme === "light"
+            ? "linear-gradient(90deg, #2563eb, #7c3aed)"
+            : "linear-gradient(90deg, #111827, #1f2937)",
+        color: "white",
+        boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
       }}
     >
       {/* Logo */}
-      <h2 style={{ margin: 0 }}>
+      <h2
+        style={{
+          margin: 0,
+          fontSize: "1.6rem",
+          fontWeight: "700",
+        }}
+      >
         <Link
           to="/"
-          style={{ textDecoration: "none", color: "inherit" }}
+          style={{
+            textDecoration: "none",
+            color: "white",
+          }}
         >
-          Virtual Science Lab
+          🔬 Virtual Science Lab
         </Link>
       </h2>
 
-      {/* Links + Theme Toggle */}
-      <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-        <Link style={linkStyle} to="/biology">Biology</Link>
-        <Link style={linkStyle} to="/chemistry">Chemistry</Link>
-        <Link style={linkStyle} to="/physics">Physics</Link>
+      {/* Desktop Nav */}
+      <div
+        style={{
+          display: "flex",
+          gap: "16px",
+          alignItems: "center",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        <Link
+          style={linkStyle}
+          to="/biology"
+          onMouseOver={(e) =>
+            (e.target.style.background = "rgba(255,255,255,0.15)")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.background = "transparent")
+          }
+        >
+          Biology
+        </Link>
+
+        <Link
+          style={linkStyle}
+          to="/chemistry"
+          onMouseOver={(e) =>
+            (e.target.style.background = "rgba(255,255,255,0.15)")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.background = "transparent")
+          }
+        >
+          Chemistry
+        </Link>
+
+        <Link
+          style={linkStyle}
+          to="/physics"
+          onMouseOver={(e) =>
+            (e.target.style.background = "rgba(255,255,255,0.15)")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.background = "transparent")
+          }
+        >
+          Physics
+        </Link>
 
         <button
           onClick={toggleTheme}
           style={{
             border: "none",
-            background: "transparent",
+            background: "rgba(255,255,255,0.15)",
+            color: "white",
             cursor: "pointer",
             fontSize: "18px",
+            padding: "10px 14px",
+            borderRadius: "10px",
           }}
           title="Toggle theme"
         >
@@ -49,8 +116,11 @@ const Navbar = () => {
 
 const linkStyle = {
   textDecoration: "none",
-  color: "inherit",
-  fontWeight: "500",
+  color: "white",
+  fontWeight: "600",
+  padding: "8px 14px",
+  borderRadius: "8px",
+  transition: "all 0.3s ease",
 };
 
 export default Navbar;
