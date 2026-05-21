@@ -2,13 +2,37 @@
 
 <div align="center">
 
-![Virtual Lab Banner](https://img.shields.io/badge/Virtual-Science%20Lab-blue?style=for-the-badge\&logo=react)
+![Virtual Lab Banner](https://img.shields.io/badge/Virtual-Science%20Lab-blue?style=for-the-badge&logo=react)
 
 ### 🌍 Revolutionizing Practical Learning Through Virtual Experiments
 
 🚀 Interactive • 🧪 Safe • 🌐 Accessible • 🎓 Educational
 
 </div>
+
+---
+
+## Table of Contents
+
+- [Overview](#-overview)
+- [Vision](#-vision)
+- [Problem Statement](#-problem-statement)
+- [Our Solution](#-our-solution)
+- [Key Features](#-key-features)
+- [How It Works](#-how-it-works)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Project Structure](#-project-structure)
+- [Installation & Setup](#-installation--setup)
+  - [Frontend Setup](#-frontend-setup)
+  - [Backend Setup](#-backend-setup)
+  - [Running the Project](#-running-the-project)
+- [Environment Variables](#-environment-variables)
+- [API Documentation](#-api-documentation)
+- [Experiment Preview](#-experiment-preview)
+- [Contribution Workflow](#-contribution-workflow)
+- [Developer Experience (DX)](#-developer-experience-dx)
+- [License](#-license)
 
 ---
 
@@ -70,52 +94,52 @@ The **Virtual Science Lab Simulator** bridges this gap by offering a fully digit
 
 ## 🧪 Chemistry Simulations
 
-* Chemical reactions
-* Color changes & observations
-* Mixing compounds
-* Virtual lab tools
+- Chemical reactions
+- Color changes & observations
+- Mixing compounds
+- Virtual lab tools
 
 ---
 
 ## ⚡ Physics Experiments
 
-* Motion simulations
-* Electric circuits
-* Force & gravity experiments
-* Interactive mechanics
+- Motion simulations
+- Electric circuits
+- Force & gravity experiments
+- Interactive mechanics
 
 ---
 
 ## 🧬 Biology Modules
 
-* Human anatomy models
-* Cell structures
-* Virtual dissections
-* Plant biology exploration
+- Human anatomy models
+- Cell structures
+- Virtual dissections
+- Plant biology exploration
 
 ---
 
 ## 📖 Guided Learning
 
-* Step-by-step experiment instructions
-* Theory explanations
-* Visual understanding of concepts
+- Step-by-step experiment instructions
+- Theory explanations
+- Visual understanding of concepts
 
 ---
 
 ## 🌐 Web-Based Access
 
-* No installation required
-* Accessible from anywhere
-* Works directly in the browser
+- No installation required
+- Accessible from anywhere
+- Works directly in the browser
 
 ---
 
 ## 🛡️ Safe & Cost Effective
 
-* No dangerous chemicals
-* No equipment damage
-* Risk-free learning environment
+- No dangerous chemicals
+- No equipment damage
+- Risk-free learning environment
 
 ---
 
@@ -144,32 +168,63 @@ F --> G
 
 # 🛠️ Tech Stack
 
+---
+
+# 🌐 API Documentation
+
+For backend API reference, see: [docs/API_GUIDE.md](./docs/API_GUIDE.md)
+
+When you run the backend locally, you can open:
+
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+
+---
+
+# Environment Variables
+
+This project expects backend environment variables for external services (e.g., database) and API configuration. Create a `.env` file in the backend directory and copy/align keys with your `.env.example` (if present).
+
+Typical keys you may need (update based on your `backend/app/core/config.py`):
+
+- `MONGODB_URL` (MongoDB connection string)
+- `API_BASE_URL` (optional: frontend/backend API base)
+- `CORS_ORIGINS` (optional: allowed origins)
+
+---
+
+# 🧩 Architecture
+
+See: [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+
+---
+
 ## 🎨 Frontend
 
-* ⚛️ React.js
-* 🎨 Tailwind CSS
-* 🌌 Three.js
-* 📦 Framer Motion
+- ⚛️ React.js
+- 🎨 Tailwind CSS
+- 🌌 Three.js
+- 📦 Framer Motion
 
 ---
 
 ## ⚙️ Backend
 
-* 🐍 Python
-* ⚡ FastAPI
+- 🐍 Python
+- ⚡ FastAPI
 
 ---
 
 ## 🗄️ Database
 
-* 🍃 MongoDB
+- 🍃 MongoDB
 
 ---
 
 ## ☁️ Deployment
 
-* ▲ Vercel (Frontend)
-* 🚀 Render (Backend)
+- ▲ Vercel (Frontend)
+- 🚀 Render (Backend)
 
 ---
 
@@ -295,7 +350,13 @@ Please read:
 
 ---
 
-# 🌟 Support the Project
+# 🤝 Contributing
+
+We welcome contributions from developers, designers, educators, and science enthusiasts! 💙
+
+Contributions by @nikita09-lab 💙
+
+## 📌 Steps to Contribute
 
 If you found this project useful:
 
