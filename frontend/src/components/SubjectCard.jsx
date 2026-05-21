@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
 
 const SubjectCard = ({ title, description, link }) => {
+ 
+  const getIcon = (title) => {
+    const t = title.trim().toLowerCase();
+
+    if (t === "biology") return "🧬";
+    if (t === "chemistry") return "⚗️";
+    if (t === "physics") return "⚡";
+
+    return "📘";
+  };
+
   return (
     <Link
       to={link}
@@ -27,6 +38,12 @@ const SubjectCard = ({ title, description, link }) => {
           e.currentTarget.style.boxShadow = "0 6px 10px rgba(0,0,0,0.06)";
         }}
       >
+
+        {/* ICON ADDED HERE */}
+        <div style={{ fontSize: "28px", marginBottom: "10px" }}>
+          {getIcon(title)}
+        </div>
+
         <h2 style={{ marginBottom: "10px", color: "#1e293b" }}>
           {title}
         </h2>
@@ -34,6 +51,7 @@ const SubjectCard = ({ title, description, link }) => {
         <p style={{ fontSize: "14px", color: "#6b7280" }}>
           {description}
         </p>
+
       </div>
     </Link>
   );

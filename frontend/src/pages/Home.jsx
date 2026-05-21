@@ -83,6 +83,46 @@ const Home = () => {
   const challengeScore = completedQuizzes["weekly-challenge"] || 0;
 
   return (
+    <div className="home-container">
+      {/* HERO SECTION */}
+      <div className="home-hero">
+        <h1>🌱 Virtual Science Lab</h1>
+        <p>
+          Explore interactive Biology, Chemistry, and Physics experiments with AI-powered simulations.
+        </p>
+
+        <div
+          className={`backend-status ${
+            backendStatus === "ok" ? "success" : "error"
+          }`}
+        >
+          {backendStatus === "ok"
+            ? "Backend Connected ✅"
+            : backendStatus}
+        </div>
+      </div>
+
+      {/* SUBJECT CARDS */}
+      <div className="card-grid">
+        <SubjectCard
+          title="Biology"
+          description="Human anatomy and cell structures in 3D"
+          link="/biology"
+        />
+
+        <SubjectCard
+          title="Chemistry"
+          description="Chemical reactions and laboratory apparatus"
+          link="/chemistry"
+        />
+
+        <SubjectCard
+          title="Physics"
+          description="Motion, magnetism, and physical laws"
+          link="/physics"
+        />
+      </div>
+
     <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex flex-col transition-all duration-300">
       <div className="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
         
