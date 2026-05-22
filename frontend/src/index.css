@@ -562,6 +562,28 @@ body[data-theme="dark"] .tracker-bar {
   border-top: 4px solid #3b82f6;
 }
 
+.sparkle {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #4facfe 40%, transparent 70%); /* soft blue */
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: fadeSparkle 1s ease-out forwards;
+  z-index: 9999;
+}
+
+
+@keyframes fadeSparkle {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
 body[data-theme="dark"] .experiment-card h3 {
   color: #f8fafc;
 }
