@@ -189,6 +189,38 @@
         "correct": 0
       }
     ],
+    "acid-base-neutralization": [
+      {
+        "question": "What are the main products of the reaction between hydrochloric acid and sodium hydroxide?",
+        "options": ["Hydrogen and oxygen", "Sodium chloride and water", "Carbon dioxide and water", "Sodium hydroxide and chlorine"],
+        "correct": 1,
+        "explanation": "Neutralization combines acid hydrogen ions with base hydroxide ions to form water, while sodium and chloride ions form sodium chloride."
+      },
+      {
+        "question": "Why does the temperature usually rise slightly during this experiment?",
+        "options": ["The reaction is exothermic", "The solution freezes", "The indicator releases oxygen", "Salt absorbs all heat"],
+        "correct": 0,
+        "explanation": "Acid-base neutralization releases heat, so the mixture can become warmer during the reaction."
+      },
+      {
+        "question": "Phenolphthalein is used in this experiment to help observe a change in solution condition.",
+        "options": ["True", "False"],
+        "correct": 0,
+        "explanation": "Indicators such as phenolphthalein change appearance as acidity/basicity changes, helping identify the neutralization point."
+      },
+      {
+        "question": "Which ions directly combine to form water during neutralization?",
+        "options": ["Na+ and Cl-", "H+ and OH-", "Cl- and OH-", "Na+ and H+"],
+        "correct": 1,
+        "explanation": "Hydrogen ions from the acid combine with hydroxide ions from the base to produce H2O."
+      },
+      {
+        "question": "Which precaution is most appropriate when mixing acid and base solutions?",
+        "options": ["Add solutions slowly and avoid splashing", "Smell the mixture closely", "Heat the acid before mixing", "Use bare hands for better control"],
+        "correct": 0,
+        "explanation": "Slow addition, careful stirring, gloves, and goggles reduce splash risk when handling corrosive solutions."
+      }
+    ],
     "velocity-acceleration": [
       {
         "question": "Why is velocity considered a vector quantity rather than a scalar quantity?",

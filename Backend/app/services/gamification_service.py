@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import os
+from datetime import datetime, timezone
 
 # Dynamically calculate the DB path so it works regardless of where the app is started
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "gamification.db")
@@ -8,7 +9,7 @@ DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "
 # Subject experiment lists for badge checking
 EXPERIMENTS_BY_SUBJECT = {
     "biology": ["human-body", "mitochondria", "eye", "kidney"],
-    "chemistry": ["chemistry-equipment", "volcano-experiment", "condenser"],
+    "chemistry": ["chemistry-equipment", "volcano-experiment", "condenser", "acid-base-neutralization"],
     "physics": ["velocity-acceleration", "magnetic-field-wires", "thumb-rule", "magnetic-field-direction"]
 }
 
@@ -31,6 +32,19 @@ def init_db():
             xp INTEGER DEFAULT 0,
             completed_quizzes TEXT DEFAULT '{}',
             unlocked_badges TEXT DEFAULT '[]'
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS quiz_attempts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            experiment_id TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            selected_answers TEXT NOT NULL DEFAULT '[]',
+            score INTEGER NOT NULL,
+            total_questions INTEGER NOT NULL,
+            percentage INTEGER NOT NULL,
+            attempted_at TEXT NOT NULL
         )
     """)
     
@@ -79,13 +93,87 @@ def update_user_progress(user_id: str, xp: int, completed_quizzes: dict, unlocke
     conn.commit()
     conn.close()
 
-def complete_quiz(user_id: str, experiment_id: str, score: int, total_questions: int, subject: str):
+def save_quiz_attempt(user_id: str, experiment_id: str, subject: str, selected_answers: list, score: int, total_questions: int):
+    """Persist every quiz submission so students can review improvement over time."""
+    attempted_at = datetime.now(timezone.utc).isoformat()
+    percentage = round((score / total_questions) * 100) if total_questions else 0
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO quiz_attempts (
+            user_id, experiment_id, subject, selected_answers, score, total_questions, percentage, attempted_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        user_id,
+        experiment_id,
+        subject,
+        json.dumps(selected_answers),
+        score,
+        total_questions,
+        percentage,
+        attempted_at,
+    ))
+    attempt_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    return {
+        "id": attempt_id,
+        "user_id": user_id,
+        "experiment_id": experiment_id,
+        "subject": subject,
+        "selected_answers": selected_answers,
+        "score": score,
+        "total_questions": total_questions,
+        "percentage": percentage,
+        "attempted_at": attempted_at,
+    }
+
+def get_quiz_attempts(user_id: str, experiment_id: str = None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    if experiment_id:
+        cursor.execute("""
+            SELECT * FROM quiz_attempts
+            WHERE user_id = ? AND experiment_id = ?
+            ORDER BY attempted_at DESC
+        """, (user_id, experiment_id))
+    else:
+        cursor.execute("""
+            SELECT * FROM quiz_attempts
+            WHERE user_id = ?
+            ORDER BY attempted_at DESC
+        """, (user_id,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [
+        {
+            "id": row["id"],
+            "user_id": row["user_id"],
+            "experiment_id": row["experiment_id"],
+            "subject": row["subject"],
+            "selected_answers": json.loads(row["selected_answers"]),
+            "score": row["score"],
+            "total_questions": row["total_questions"],
+            "percentage": row["percentage"],
+            "attempted_at": row["attempted_at"],
+        }
+        for row in rows
+    ]
+
+def complete_quiz(user_id: str, experiment_id: str, score: int, total_questions: int, subject: str, selected_answers: list = None):
     """
     Submits a quiz score for an experiment.
     - Flat 50 XP awarded for first-time completion of a quiz.
     - 10 XP awarded per correct answer, but ONLY if they beat their previous high score (no farming!).
     - Evaluates and unlocks subject-specific and global badges.
     """
+    selected_answers = selected_answers or []
+    attempt = save_quiz_attempt(user_id, experiment_id, subject, selected_answers, score, total_questions)
+
     # 1. Fetch current progress
     progress = get_user_progress(user_id)
     current_xp = progress["xp"]
@@ -124,10 +212,10 @@ def complete_quiz(user_id: str, experiment_id: str, score: int, total_questions:
         {"id": "Junior Biologist", "subject": "biology", "threshold": 1, "type": "any_perfect"},
         {"id": "Biology Pro", "subject": "biology", "threshold": 4, "type": "all_perfect"},
         {"id": "Junior Chemist", "subject": "chemistry", "threshold": 1, "type": "any_perfect"},
-        {"id": "Chemistry Pro", "subject": "chemistry", "threshold": 3, "type": "all_perfect"},
+        {"id": "Chemistry Pro", "subject": "chemistry", "threshold": 4, "type": "all_perfect"},
         {"id": "Junior Physicist", "subject": "physics", "threshold": 1, "type": "any_perfect"},
         {"id": "Physics Pro", "subject": "physics", "threshold": 4, "type": "all_perfect"},
-        {"id": "Science Champion", "subject": "all", "threshold": 11, "type": "grand_perfect"},
+        {"id": "Science Champion", "subject": "all", "threshold": 12, "type": "grand_perfect"},
         {"id": "Explorer", "subject": "weekly", "threshold": 1, "type": "weekly_perfect"}
     ]
     
@@ -182,5 +270,7 @@ def complete_quiz(user_id: str, experiment_id: str, score: int, total_questions:
         "new_badges": newly_unlocked,
         "total_xp": updated_xp,
         "completed_quizzes": completed_quizzes,
-        "unlocked_badges": unlocked_badges
+        "unlocked_badges": unlocked_badges,
+        "attempt": attempt,
+        "quiz_attempts": get_quiz_attempts(user_id)
     }

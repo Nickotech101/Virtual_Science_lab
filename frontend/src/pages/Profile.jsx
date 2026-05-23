@@ -31,7 +31,7 @@ const BADGES_CONFIG = [
   {
     id: "Chemistry Pro",
     title: "Chemistry Pro",
-    description: "Complete all 3 Chemistry quizzes with a perfect score (5/5).",
+    description: "Complete all 4 Chemistry quizzes with a perfect score (5/5).",
     emoji: "⚗️",
     subject: "Chemistry",
     color: "from-purple-500 to-violet-700 shadow-violet-500/20 text-violet-100"
@@ -55,7 +55,7 @@ const BADGES_CONFIG = [
   {
     id: "Science Champion",
     title: "Science Champion",
-    description: "Achieve master comprehension with 100% score on all 11 quizzes!",
+    description: "Achieve master comprehension with 100% score on all 12 quizzes!",
     emoji: "🏆",
     subject: "All",
     color: "from-yellow-400 via-amber-500 to-yellow-600 shadow-yellow-500/30 text-yellow-50 font-black animate-pulse"
@@ -78,6 +78,7 @@ const EXPERIMENTS_ROADMAP = [
   { id: "chemistry-equipment", title: "Laboratory Equipment Set", subject: "Chemistry", link: "/chemistry/chemistry-equipment" },
   { id: "volcano-experiment", title: "Volcano Chemical Reaction", subject: "Chemistry", link: "/chemistry/volcano-experiment" },
   { id: "condenser", title: "Glass Vapor Condenser", subject: "Chemistry", link: "/chemistry/condenser" },
+  { id: "acid-base-neutralization", title: "Acid Base Neutralization", subject: "Chemistry", link: "/chemistry/acid-base-neutralization" },
   { id: "velocity-acceleration", title: "Velocity & Acceleration Laws", subject: "Physics", link: "/physics/velocity-acceleration" },
   { id: "magnetic-field-wires", title: "Magnetic Fields (Two Wires)", subject: "Physics", link: "/physics/magnetic-field-wires" },
   { id: "thumb-rule", title: "Right-Hand Thumb Rule", subject: "Physics", link: "/physics/thumb-rule" },
@@ -93,7 +94,7 @@ const getRank = (xp) => {
 };
 
 const Profile = () => {
-  const { xp, completedQuizzes, unlockedBadges, loading } = useGamification();
+  const { xp, completedQuizzes, quizAttempts, unlockedBadges, loading } = useGamification();
   const [activeTab, setActiveTab] = useState("achievements");
 
   if (loading) {
@@ -120,7 +121,7 @@ const Profile = () => {
   // Group experiments by subject
   const subjectsMap = {
     Biology: ["human-body", "mitochondria", "eye", "kidney"],
-    Chemistry: ["chemistry-equipment", "volcano-experiment", "condenser"],
+    Chemistry: ["chemistry-equipment", "volcano-experiment", "condenser", "acid-base-neutralization"],
     Physics: ["velocity-acceleration", "magnetic-field-wires", "thumb-rule", "magnetic-field-direction"]
   };
 
@@ -157,9 +158,9 @@ const Profile = () => {
     const chemPercent = getAvgPercent("Chemistry");
     const physPercent = getAvgPercent("Physics");
 
-    // Diligence score = percentage of all 11 experiments completed
+    // Diligence score = percentage of all experiment quizzes completed
     const completedCount = Object.keys(completedQuizzes).length;
-    const diligencePercent = Math.round((completedCount / 11) * 100);
+    const diligencePercent = Math.round((completedCount / 12) * 100);
 
     return {
       scores: {
@@ -694,36 +695,36 @@ const Profile = () => {
                   Chronological progression timeline of your scores.
                 </p>
 
-                {Object.keys(completedQuizzes).length > 0 ? (
+                {quizAttempts.length > 0 ? (
                   <div className="relative flex flex-col gap-6 max-h-[460px] overflow-y-auto py-1.5 pr-1">
                     {/* Chronological vertical line tracker */}
                     <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-slate-200 dark:bg-slate-800" />
 
-                    {Object.entries(completedQuizzes).map(([expId, score]) => {
-                      const exp = EXPERIMENTS_ROADMAP.find(e => e.id === expId);
+                    {quizAttempts.map((attempt) => {
+                      const exp = EXPERIMENTS_ROADMAP.find(e => e.id === attempt.experiment_id);
                       return (
-                        <div key={expId} className="relative pl-7 text-left group">
+                        <div key={attempt.id} className="relative pl-7 text-left group">
                           {/* Chronological bullet marker node */}
                           <span className={`absolute left-[11px] top-[5px] w-2.5 h-2.5 rounded-full border border-white dark:border-slate-900 shadow-md ${
-                            score === 5
+                            attempt.score === attempt.total_questions
                               ? "bg-emerald-500 shadow-emerald-500/20 animate-pulse"
                               : "bg-amber-500 shadow-amber-500/20"
                           }`} />
 
                           <div>
                             <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200">
-                              {exp ? exp.title : expId}
+                              {exp ? exp.title : attempt.experiment_id}
                             </h4>
                             <div className="flex justify-between items-center mt-2.5">
                               <span className="text-[8px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">
-                                {exp ? exp.subject : "Science"}
+                                {exp ? exp.subject : "Science"} - {new Date(attempt.attempted_at).toLocaleDateString()}
                               </span>
                               <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                                score === 5
+                                attempt.score === attempt.total_questions
                                   ? "bg-emerald-500/10 text-emerald-500"
                                   : "bg-amber-500/10 text-amber-500"
                               }`}>
-                                {score}/5 ⭐
+                                {attempt.score}/{attempt.total_questions}
                               </span>
                             </div>
                           </div>

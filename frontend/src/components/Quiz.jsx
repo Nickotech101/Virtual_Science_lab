@@ -1,35 +1,60 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useGamification } from "../context/GamificationContext";
 import quizData from "../data/quizzes.json";
 
+const formatDateTime = (value) => {
+  if (!value) return "Just now";
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+};
+
+const getScoreTone = (score, total) => {
+  const percent = total ? score / total : 0;
+  if (percent >= 0.8) return "text-emerald-600 dark:text-emerald-400";
+  if (percent >= 0.5) return "text-amber-600 dark:text-amber-400";
+  return "text-rose-600 dark:text-rose-400";
+};
+
 const Quiz = ({ experimentId, subject }) => {
-  const { submitQuiz, completedQuizzes } = useGamification();
+  const { submitQuiz, completedQuizzes, quizAttempts } = useGamification();
   const questions = quizData.quizzes[experimentId] || [];
 
   const [quizStarted, setQuizStarted] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [isAnswered, setIsAnswered] = useState(false);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [quizFinished, setQuizFinished] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [xpReport, setXpReport] = useState(null);
+
+  const experimentAttempts = useMemo(
+    () => (quizAttempts || []).filter((attempt) => attempt.experiment_id === experimentId),
+    [quizAttempts, experimentId]
+  );
 
   if (questions.length === 0) {
     return null;
   }
 
   const currentQuestion = questions[currentIdx];
+  const selectedOption = selectedAnswers[currentIdx];
+  const isAnswered = selectedOption !== undefined;
+  const correctAnswers = selectedAnswers.reduce(
+    (total, answer, index) => total + (answer === questions[index]?.correct ? 1 : 0),
+    0
+  );
   const previousHighScore = completedQuizzes[experimentId] ?? -1;
+  const scorePercent = Math.round((correctAnswers / questions.length) * 100);
 
   const handleStart = () => {
     setQuizStarted(true);
     setCurrentIdx(0);
-    setSelectedOption(null);
-    setIsAnswered(false);
-    setCorrectAnswers(0);
+    setSelectedAnswers([]);
     setQuizFinished(false);
     setSubmitted(false);
     setXpReport(null);
@@ -37,18 +62,16 @@ const Quiz = ({ experimentId, subject }) => {
 
   const handleOptionSelect = (optionIdx) => {
     if (isAnswered) return;
-    setSelectedOption(optionIdx);
-    setIsAnswered(true);
-    if (optionIdx === currentQuestion.correct) {
-      setCorrectAnswers((prev) => prev + 1);
-    }
+    setSelectedAnswers((answers) => {
+      const nextAnswers = [...answers];
+      nextAnswers[currentIdx] = optionIdx;
+      return nextAnswers;
+    });
   };
 
   const handleNext = () => {
     if (currentIdx < questions.length - 1) {
       setCurrentIdx((prev) => prev + 1);
-      setSelectedOption(null);
-      setIsAnswered(false);
     } else {
       setQuizFinished(true);
     }
@@ -56,7 +79,13 @@ const Quiz = ({ experimentId, subject }) => {
 
   const handleSubmitScore = async () => {
     setSubmitting(true);
-    const result = await submitQuiz(experimentId, correctAnswers, subject);
+    const result = await submitQuiz(
+      experimentId,
+      correctAnswers,
+      subject,
+      selectedAnswers,
+      questions.length
+    );
     setSubmitting(false);
     setSubmitted(true);
     if (result) {
@@ -64,10 +93,13 @@ const Quiz = ({ experimentId, subject }) => {
     }
   };
 
-  // Beautiful visual feedback helper classes
+  const getExplanation = (question) =>
+    question.explanation ||
+    `Correct answer: ${question.options[question.correct]}. Review the experiment notes to connect this concept with the observation.`;
+
   const getOptionStyle = (index) => {
     if (!isAnswered) {
-      return "border-slate-300 hover:border-violet-500 hover:bg-violet-50 text-slate-700 dark:text-slate-300 dark:hover:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 cursor-pointer";
+      return "border-slate-300 hover:border-blue-500 hover:bg-blue-50 text-slate-700 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 cursor-pointer";
     }
     if (index === currentQuestion.correct) {
       return "border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300 font-semibold";
@@ -75,190 +107,113 @@ const Quiz = ({ experimentId, subject }) => {
     if (selectedOption === index && index !== currentQuestion.correct) {
       return "border-rose-500 bg-rose-50 text-rose-900 dark:bg-rose-950/30 dark:text-rose-300";
     }
-    return "border-slate-200 text-slate-500 dark:text-slate-400 opacity-60 dark:border-slate-800";
+    return "border-slate-200 text-slate-500 dark:text-slate-400 opacity-70 dark:border-slate-800";
   };
 
   return (
-    <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-xl transition-all duration-300 dark:border-slate-800 dark:bg-slate-900 max-w-2xl mx-auto">
+    <section className="mt-8 mx-auto max-w-3xl overflow-hidden rounded-lg border border-slate-200 bg-white p-6 shadow-xl transition-all duration-300 dark:border-slate-800 dark:bg-slate-900">
       <AnimatePresence mode="wait">
         {!quizStarted ? (
           <Motion.div
             key="start"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            className="text-center py-4"
+            exit={{ opacity: 0, y: -12 }}
+            className="text-center py-3"
           >
-            {experimentId === "weekly-challenge" ? (
-              <>
-                {/* Weekly Challenge — special icon ring */}
-                <div className="relative w-20 h-20 mx-auto mb-6 bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl shadow-cyan-500/30">
-                  <div className="absolute inset-1 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center">
-                    <span className="text-4xl">💡</span>
-                  </div>
-                  {/* Animated outer ring pulse */}
-                  <div className="absolute -inset-1 rounded-full border-2 border-cyan-400/40 animate-ping" />
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/40 mb-4">
-                  Available Mondays Only
-                </div>
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-2xl font-black text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+              Q
+            </div>
+            <p className="text-xs font-black uppercase tracking-wide text-blue-600 dark:text-blue-400">
+              Performance evaluation
+            </p>
+            <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+              Experiment Quiz
+            </h3>
+            <p className="mx-auto mt-2 max-w-md text-sm font-medium leading-relaxed text-slate-500 dark:text-slate-400">
+              Answer {questions.length} conceptual and observation-based questions, then review your score and explanations.
+            </p>
 
-                <h3 className="text-2xl font-black tracking-tight bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-cyan-400 dark:via-blue-400 dark:to-purple-400">
-                  Weekly Challenge
-                </h3>
+            <div className="my-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+                <span className="block text-[10px] font-black uppercase text-slate-400">Best score</span>
+                <strong className="text-lg text-slate-800 dark:text-slate-100">
+                  {previousHighScore === -1 ? "New" : `${previousHighScore}/${questions.length}`}
+                </strong>
+              </div>
+              <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+                <span className="block text-[10px] font-black uppercase text-slate-400">Attempts</span>
+                <strong className="text-lg text-slate-800 dark:text-slate-100">{experimentAttempts.length}</strong>
+              </div>
+              <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+                <span className="block text-[10px] font-black uppercase text-slate-400">Reward</span>
+                <strong className="text-lg text-slate-800 dark:text-slate-100">
+                  {previousHighScore === -1 ? "XP ready" : "Improve"}
+                </strong>
+              </div>
+            </div>
 
-                <p className="text-slate-500 dark:text-slate-400 mt-3 max-w-sm mx-auto text-xs font-semibold leading-relaxed">
-                  A special quiz that drops every <strong className="text-slate-700 dark:text-slate-200">Monday</strong> - covering Biology, Chemistry & Physics. Score <strong className="text-slate-700 dark:text-slate-200">4 or more</strong> to unlock the exclusive <strong className="text-cyan-600 dark:text-cyan-400"> Explorer Badge</strong>!
-                </p>
-
-                {/* Weekly Challenge Reward Panel */}
-                <div className="flex flex-wrap justify-center gap-3 my-6">
-                  {previousHighScore === -1 ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                      ⚡ +150 XP First Attempt Bonus
-                    </div>
-                  ) : previousHighScore < questions.length ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                      ⚡ +{(questions.length - previousHighScore) * 10} XP Improvement
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
-                      ⚡ Practice Mode
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                     Explorer Badge (score 4+/5)
-                  </div>
-
-                  {previousHighScore !== -1 && (
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black border ${previousHighScore >= 4
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                        : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                      }`}>
-                      ⭐ Best: {previousHighScore}/{questions.length} {previousHighScore >= 4 ? "🏅" : ""}
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  onClick={handleStart}
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all duration-300 hover:scale-105 active:scale-98 shadow-md shadow-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/30"
-                >
-                  {previousHighScore === -1 ? "Accept the Challenge" : "Re-attempt Challenge"}
-                </button>
-              </>
-            ) : (
-              <>
-                {/* Regular experiment quiz — original design */}
-                <div className="relative w-16 h-16 mx-auto mb-6 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30">
-                  <div className="absolute inset-0.5 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center">
-                    <span className="text-3xl animate-bounce">🎓</span>
-                  </div>
-                </div>
-
-                <h3 className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">
-                  Test Your Understanding!
-                </h3>
-
-                <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto text-xs font-semibold leading-relaxed">
-                  Complete a quick {questions.length}-question conceptual quiz on this experiment to test your learning, earn experience points, and unlock badges!
-                </p>
-
-                {/* Gamification Rewards Panel */}
-                <div className="flex flex-wrap justify-center gap-3 my-6">
-                  {previousHighScore === -1 ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                      ⚡ +100 XP Max Reward
-                    </div>
-                  ) : previousHighScore < questions.length ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                      ⚡ +{(questions.length - previousHighScore) * 10} XP Improvement
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
-                       Practice Mode 
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                    🏆 Subject Badge
-                  </div>
-
-                  {previousHighScore !== -1 && (
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black border ${previousHighScore === questions.length
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                        : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                      }`}>
-                      ⭐ Record: {previousHighScore}/{questions.length}
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  onClick={handleStart}
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all duration-300 hover:scale-105 active:scale-98 shadow-md shadow-purple-500/20 hover:shadow-lg hover:shadow-purple-500/30"
-                >
-                  {previousHighScore === -1 ? "Challenge Quiz →" : "Re-attempt Quiz"}
-                </button>
-              </>
-            )}
+            <button
+              onClick={handleStart}
+              className="rounded-lg bg-blue-600 px-7 py-3 text-xs font-extrabold uppercase tracking-wide text-white shadow-md shadow-blue-500/20 transition hover:bg-blue-500 active:scale-95"
+            >
+              {previousHighScore === -1 ? "Start Quiz" : "Retake Quiz"}
+            </button>
           </Motion.div>
         ) : !quizFinished ? (
           <Motion.div
             key="running"
-            initial={{ opacity: 0, x: 25 }}
+            initial={{ opacity: 0, x: 22 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -25 }}
-            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, x: -22 }}
+            transition={{ duration: 0.2 }}
           >
-            {/* Header progress bar */}
-            <div className="flex justify-between items-center mb-4 text-xs font-semibold text-slate-400">
-              <span>QUESTION {currentIdx + 1} OF {questions.length}</span>
-              <span>{Math.round(((currentIdx + 1) / questions.length) * 100)}% Complete</span>
+            <div className="mb-4 flex items-center justify-between text-xs font-bold text-slate-400">
+              <span>Question {currentIdx + 1} of {questions.length}</span>
+              <span>{Math.round(((currentIdx + 1) / questions.length) * 100)}% complete</span>
             </div>
-            <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mb-6 overflow-hidden">
+            <div className="mb-6 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div
-                className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full transition-all duration-300"
+                className="h-full rounded-full bg-blue-600 transition-all duration-300"
                 style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
               />
             </div>
 
-            {/* Question Text */}
-            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">
+            <h4 className="mb-5 text-lg font-bold leading-snug text-slate-800 dark:text-slate-100">
               {currentQuestion.question}
             </h4>
 
-            {/* Options */}
             <div className="flex flex-col gap-3">
               {currentQuestion.options.map((option, idx) => (
                 <button
-                  key={idx}
+                  key={option}
                   disabled={isAnswered}
                   onClick={() => handleOptionSelect(idx)}
-                  className={`w-full p-4 text-left border rounded-xl transition-all duration-200 text-sm font-medium ${getOptionStyle(
-                    idx
-                  )}`}
+                  className={`w-full rounded-lg border p-4 text-left text-sm font-medium transition-all duration-200 ${getOptionStyle(idx)}`}
                 >
-                  <div className="flex items-center justify-between">
+                  <span className="flex items-center justify-between gap-4">
                     <span>{option}</span>
-                    {isAnswered && idx === currentQuestion.correct && (
-                      <span className="text-emerald-500 text-base">✓</span>
-                    )}
-                    {isAnswered && selectedOption === idx && idx !== currentQuestion.correct && (
-                      <span className="text-rose-500 text-base">✗</span>
-                    )}
-                  </div>
+                    {isAnswered && idx === currentQuestion.correct && <span className="text-emerald-500">Correct</span>}
+                    {isAnswered && selectedOption === idx && idx !== currentQuestion.correct && <span className="text-rose-500">Incorrect</span>}
+                  </span>
                 </button>
               ))}
             </div>
 
-            {/* Actions */}
+            {isAnswered && (
+              <div className="mt-5 rounded-lg border border-blue-100 bg-blue-50 p-4 text-left dark:border-blue-900/50 dark:bg-blue-950/20">
+                <p className="text-xs font-black uppercase text-blue-700 dark:text-blue-300">Explanation</p>
+                <p className="mt-1 text-sm font-medium leading-relaxed text-slate-700 dark:text-slate-300">
+                  {getExplanation(currentQuestion)}
+                </p>
+              </div>
+            )}
+
             {isAnswered && (
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={handleNext}
-                  className="px-6 py-2 rounded-xl bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 font-semibold text-xs hover:bg-slate-700 hover:scale-[1.02] active:scale-95 transition-all duration-150"
+                  className="rounded-lg bg-slate-900 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-slate-700 active:scale-95 dark:bg-slate-100 dark:text-slate-900"
                 >
                   {currentIdx === questions.length - 1 ? "Finish Quiz" : "Next Question"}
                 </button>
@@ -268,34 +223,68 @@ const Quiz = ({ experimentId, subject }) => {
         ) : (
           <Motion.div
             key="finished"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-4"
+            className="py-2"
           >
-            <h3 className="text-2xl font-black text-slate-800 dark:text-slate-100">Quiz Completed!</h3>
-
-            <div className="my-6">
-              <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
-                {correctAnswers} / {questions.length}
-              </span>
-              <p className="text-slate-400 dark:text-slate-500 font-medium text-xs mt-2 uppercase tracking-wider">
-                {correctAnswers === questions.length
-                  ? "Perfect Score! 🌟"
-                  : correctAnswers >= Math.ceil(questions.length / 2)
-                    ? "Great job! 👍"
-                    : "Keep studying! 📚"}
+            <div className="text-center">
+              <p className="text-xs font-black uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                Result summary
               </p>
+              <h3 className="mt-2 text-2xl font-black text-slate-800 dark:text-slate-100">
+                Quiz Completed
+              </h3>
+              <div className="my-5">
+                <span className={`text-5xl font-extrabold ${getScoreTone(correctAnswers, questions.length)}`}>
+                  {correctAnswers}/{questions.length}
+                </span>
+                <p className="mt-2 text-xs font-bold uppercase tracking-wide text-slate-400">
+                  {scorePercent}% accuracy
+                </p>
+              </div>
             </div>
 
-            {/* Score Comparison Info */}
-            <p className="text-slate-500 dark:text-slate-400 text-xs px-6">
-              You correctly answered {correctAnswers} out of {questions.length} questions.
-            </p>
+            <div className="mt-6 space-y-3">
+              {questions.map((question, index) => {
+                const answer = selectedAnswers[index];
+                const isCorrect = answer === question.correct;
+                return (
+                  <div
+                    key={question.question}
+                    className="rounded-lg border border-slate-200 p-4 text-left dark:border-slate-800"
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                        {index + 1}. {question.question}
+                      </h4>
+                      <span className={`w-fit rounded-full px-2.5 py-1 text-[10px] font-black uppercase ${
+                        isCorrect
+                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                          : "bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
+                      }`}>
+                        {isCorrect ? "Correct" : "Review"}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                      Your answer: {question.options[answer] || "Not answered"}
+                    </p>
+                    {!isCorrect && (
+                      <p className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        Correct answer: {question.options[question.correct]}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                      {getExplanation(question)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
 
-            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <button
                 onClick={handleStart}
-                className="px-5 py-2 border border-slate-300 dark:border-slate-700 rounded-xl font-semibold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-slate-300 px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 Retry Quiz
               </button>
@@ -304,32 +293,51 @@ const Quiz = ({ experimentId, subject }) => {
                 <button
                   onClick={handleSubmitScore}
                   disabled={submitting}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xs hover:scale-105 active:scale-95 transition-all shadow-md shadow-purple-500/10 flex items-center justify-center gap-2"
+                  className="rounded-lg bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-500/10 transition hover:bg-blue-500 active:scale-95 disabled:cursor-wait disabled:opacity-70"
                 >
-                  {submitting ? "Submitting..." : "Submit Score"}
+                  {submitting ? "Submitting..." : "Submit Evaluation"}
                 </button>
               ) : (
-                <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 w-full sm:w-auto">
-                  <span className="text-emerald-500 font-bold text-xs flex items-center gap-1.5">
-                    ✓ Score Submitted Successfully!
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-center dark:border-emerald-900/50 dark:bg-emerald-950/20">
+                  <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                    Evaluation saved
                   </span>
-                  {xpReport && xpReport.xpEarned > 0 && (
-                    <span className="text-slate-500 dark:text-slate-400 text-[10px] mt-0.5">
-                      Earned +{xpReport.xpEarned} XP (Total XP: {xpReport.totalXp} XP)
-                    </span>
-                  )}
-                  {xpReport && xpReport.xpEarned === 0 && (
-                    <span className="text-slate-400 text-[10px] mt-0.5">
-                      No new XP earned (previous high score matched/unbeaten)
-                    </span>
+                  {xpReport && (
+                    <p className="mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      +{xpReport.xpEarned} XP earned. Total XP: {xpReport.totalXp}
+                    </p>
                   )}
                 </div>
               )}
             </div>
+
+            {experimentAttempts.length > 0 && (
+              <div className="mt-8 rounded-lg border border-slate-200 p-4 dark:border-slate-800">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h4 className="font-black text-slate-800 dark:text-slate-100">Previous Attempts</h4>
+                  <span className="text-xs font-bold text-slate-400">{experimentAttempts.length} saved</span>
+                </div>
+                <div className="space-y-2">
+                  {experimentAttempts.slice(0, 4).map((attempt) => (
+                    <div
+                      key={attempt.id}
+                      className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm dark:bg-slate-800/50"
+                    >
+                      <span className="font-semibold text-slate-600 dark:text-slate-300">
+                        {formatDateTime(attempt.attempted_at)}
+                      </span>
+                      <strong className={getScoreTone(attempt.score, attempt.total_questions)}>
+                        {attempt.score}/{attempt.total_questions}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </Motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </section>
   );
 };
 

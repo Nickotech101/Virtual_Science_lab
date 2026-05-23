@@ -1,5 +1,6 @@
 import React from "react";
 import ExperimentNotesPanel from "../../components/ExperimentNotesPanel";
+import Quiz from "../../components/Quiz";
 
 const AcidBaseNeutralization = () => {
   return (
@@ -126,6 +127,8 @@ const AcidBaseNeutralization = () => {
       <div className="mt-8">
         <ExperimentNotesPanel experimentId="acid-base-neutralization" />
       </div>
+
+      <Quiz experimentId="acid-base-neutralization" subject="chemistry" />
     </div>
   );
 };
