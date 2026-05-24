@@ -329,6 +329,33 @@
         "correct": 2
       }
     ],
+    "titration-experiment": [
+      {
+        "question": "What is the primary purpose of an acid-base titration?",
+        "options": ["To filter a mixture", "To determine the concentration of an unknown solution", "To heat a solution to boiling", "To separate liquids based on density"],
+        "correct": 1
+      },
+      {
+        "question": "The solution with a known concentration used in a titration is called the titrant.",
+        "options": ["True", "False"],
+        "correct": 0
+      },
+      {
+        "question": "What is the term for the point in a titration where the amount of titrant added is chemically equivalent to the amount of analyte?",
+        "options": ["Boiling point", "Melting point", "Equivalence point", "Endpoint"],
+        "correct": 2
+      },
+      {
+        "question": "Which piece of glassware is typically used to dispense precise, variable volumes of the titrant?",
+        "options": ["Beaker", "Erlenmeyer flask", "Burette", "Test tube"],
+        "correct": 2
+      },
+      {
+        "question": "An indicator is often used in titration to provide a visual color change at or near the equivalence point.",
+        "options": ["True", "False"],
+        "correct": 0
+      }
+    ],
     "weekly-challenge": [
       {
         "question": "What biological organelle is responsible for cellular respiration, often called the powerhouse of the cell?",
