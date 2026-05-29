@@ -10,23 +10,24 @@ import Biology from "./pages/Biology";
 import Chemistry from "./pages/Chemistry";
 import Physics from "./pages/Physics";
 import FAQ from "./pages/FAQ";
+import Policy from "./pages/Policy";
 
 function App() {
   return (
     <BrowserRouter>
-      {/* Main App Layout */}
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
+      {/* Main Layout */}
+      <div className="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-white">
         
-        {/* Navigation */}
+        {/* Navbar */}
         <Navbar />
 
-        {/* Page Content */}
+        {/* Page Routes */}
         <main>
           <Routes>
             {/* Home */}
             <Route path="/" element={<Home />} />
 
-            {/* Science Subjects */}
+            {/* Subject Pages */}
             <Route path="/biology/*" element={<Biology />} />
             <Route path="/chemistry/*" element={<Chemistry />} />
             <Route path="/physics/*" element={<Physics />} />
@@ -34,25 +35,35 @@ function App() {
             {/* FAQ */}
             <Route path="/faq" element={<FAQ />} />
 
-            {/* 404 Page */}
+            {/* Policy */}
+            <Route path="/policy" element={<Policy />} />
+
+            {/* 404 Not Found */}
             <Route
               path="*"
               element={
-                <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
-                  <h1 className="text-6xl font-black text-indigo-600">
-                    404
-                  </h1>
+                <div className="flex min-h-[75vh] flex-col items-center justify-center px-6 text-center">
+                  <div className="rounded-3xl border border-indigo-400/20 bg-white/5 p-10 shadow-2xl backdrop-blur-xl">
+                    <h1 className="bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-7xl font-black text-transparent">
+                      404
+                    </h1>
 
-                  <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
-                    The page you are looking for does not exist.
-                  </p>
+                    <h2 className="mt-4 text-3xl font-bold">
+                      Page Not Found
+                    </h2>
 
-                  <a
-                    href="/"
-                    className="mt-6 rounded-2xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-500"
-                  >
-                    Back to Home
-                  </a>
+                    <p className="mt-4 max-w-md text-slate-500 dark:text-slate-300">
+                      The page you are trying to access does not exist or may
+                      have been moved.
+                    </p>
+
+                    <a
+                      href="/"
+                      className="mt-8 inline-flex items-center rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 px-6 py-3 font-semibold text-slate-900 transition duration-300 hover:scale-105"
+                    >
+                      Return Home
+                    </a>
+                  </div>
                 </div>
               }
             />
