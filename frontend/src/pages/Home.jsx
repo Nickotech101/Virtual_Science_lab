@@ -3,23 +3,30 @@ import { Link } from "react-router-dom";
 import { useGamification } from "../context/GamificationContext";
 import Quiz from "../components/Quiz";
 import Footer from "../components/Footer";
+import { useOnlineStatus } from "../context/OnlineStatusContext";
 
 const Home = () => {
   const [backendStatus, setBackendStatus] = useState("");
-  const { xp, completedQuizzes } = useGamification();
+  const { completedQuizzes } = useGamification();
   const [showChallenge, setShowChallenge] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [isMonday, setIsMonday] = useState(false);
   const [timeLeft, setTimeLeft] = useState("");
   const [statusLabel, setStatusLabel] = useState("");
 
+  const { isOnline } = useOnlineStatus();
+
   // Backend connection check
   useEffect(() => {
+    if (!isOnline) {
+      return;
+    }
+
     fetch("http://127.0.0.1:8000/")
       .then((res) => res.json())
       .then((data) => setBackendStatus(data.status))
       .catch(() => setBackendStatus("Backend not connected ❌"));
-  }, []);
+  }, [isOnline]);
 
   // Live ticking challenge window scheduler (available ONLY on Monday, closes Monday midnight)
   useEffect(() => {
@@ -101,7 +108,7 @@ const Home = () => {
           <div className="flex flex-wrap gap-3 items-center">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-              {backendStatus || "Connecting..."}
+              {!isOnline ? "Offline Mode 🟡" : (backendStatus || "Connecting...")}
             </span>
           </div>
         </div>

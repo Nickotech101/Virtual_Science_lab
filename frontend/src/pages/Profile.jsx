@@ -94,6 +94,7 @@ const getRank = (xp) => {
 
 const Profile = () => {
   const { xp, completedQuizzes, unlockedBadges, loading } = useGamification();
+  const [activeTab, setActiveTab] = useState("achievements");
 
   if (loading) {
     return (
@@ -115,8 +116,6 @@ const Profile = () => {
     const currentInRange = xp - rank.prevXp;
     progressPercent = Math.min(Math.max((currentInRange / range) * 100, 0), 100);
   }
-  
-  const [activeTab, setActiveTab] = useState("achievements");
 
   // Group experiments by subject
   const subjectsMap = {
@@ -222,7 +221,6 @@ const Profile = () => {
   }
 
   // Fallbacks for backward compatibility in other methods
-  const strongestSubject = attemptedSubjects.length > 0 ? [...subjectsList].sort((a,b) => b.score - a.score)[0] : { name: "None", score: 0, count: 0 };
   const weakestSubject = attemptedSubjects.length > 0 ? [...subjectsList].sort((a,b) => a.score - b.score)[0] : { name: "None", score: 0, count: 0 };
 
   // Dynamic Suggested Experiments (only showing attempted quizzes that need score improvement)

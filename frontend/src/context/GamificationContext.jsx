@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import API_URL from "../config";
+import { useOnlineStatus } from "./OnlineStatusContext";
 
 const GamificationContext = createContext();
 
@@ -17,29 +18,56 @@ export const GamificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [achievement, setAchievement] = useState(null);
 
-  const fetchStatus = async () => {
+  const { isOnline } = useOnlineStatus();
+
+  const fetchStatus = useCallback(async () => {
     try {
       setLoading(true);
+      if (!isOnline) {
+        const cached = localStorage.getItem("gamification_cache");
+        if (cached) {
+          const data = JSON.parse(cached);
+          setXp(data.xp || 0);
+          setCompletedQuizzes(data.completed_quizzes || {});
+          setUnlockedBadges(data.unlocked_badges || []);
+        }
+        return;
+      }
+
       const res = await fetch(`${BASE_URL}/api/gamification/status?user_id=default-student`);
       if (res.ok) {
         const data = await res.json();
         setXp(data.xp);
         setCompletedQuizzes(data.completed_quizzes);
         setUnlockedBadges(data.unlocked_badges);
+        localStorage.setItem("gamification_cache", JSON.stringify(data));
+      } else {
+        throw new Error("API failed");
       }
     } catch (err) {
       console.error("Failed to load gamification status:", err);
+      const cached = localStorage.getItem("gamification_cache");
+      if (cached) {
+        const data = JSON.parse(cached);
+        setXp(data.xp || 0);
+        setCompletedQuizzes(data.completed_quizzes || {});
+        setUnlockedBadges(data.unlocked_badges || []);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [isOnline]);
 
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [fetchStatus]);
 
   const submitQuiz = async (experimentId, score, subject) => {
     try {
+      if (!isOnline) {
+        console.warn("Offline: Quiz submission skipped.");
+        return null;
+      }
       const res = await fetch(`${BASE_URL}/api/gamification/complete-quiz`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -104,4 +132,5 @@ export const GamificationProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useGamification = () => useContext(GamificationContext);
