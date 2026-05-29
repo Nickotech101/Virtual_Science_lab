@@ -1,5 +1,5 @@
 const DB_NAME = "virtual-science-lab-db";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbInstance = null;
 
@@ -40,6 +40,11 @@ export const initDb = () => {
       // 6. Outbox Sync Queue store
       if (!db.objectStoreNames.contains("sync_queue")) {
         db.createObjectStore("sync_queue", { keyPath: "id" });
+      }
+
+      // 7. Experiment History store (New)
+      if (!db.objectStoreNames.contains("experiment_history")) {
+        db.createObjectStore("experiment_history", { keyPath: "id", autoIncrement: true });
       }
     };
 
@@ -272,6 +277,29 @@ export const offlineDb = {
     const store = await getStore("sync_queue", "readwrite");
     return new Promise((resolve) => {
       const req = store.clear();
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => resolve(false);
+    });
+  },
+
+  async getExperimentHistory() {
+    const store = await getStore("experiment_history", "readonly");
+    return new Promise((resolve) => {
+      const req = store.getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => resolve([]);
+    });
+  },
+
+  async saveExperimentHistory(record) {
+    const store = await getStore("experiment_history", "readwrite");
+    // Ensure timestamp is added if not present
+    const entry = { 
+      ...record, 
+      timestamp: record.timestamp || new Date().toISOString() 
+    };
+    return new Promise((resolve) => {
+      const req = store.add(entry);
       req.onsuccess = () => resolve(true);
       req.onerror = () => resolve(false);
     });

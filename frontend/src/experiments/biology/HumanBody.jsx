@@ -1,6 +1,17 @@
+/**
+ * HumanBody.jsx  (updated – adds ExperimentChatbot)
+ *
+ * CHANGE SUMMARY:
+ *   + Import ExperimentChatbot
+ *   + Add <ExperimentChatbot experiment={experiment} subject="biology" /> at bottom
+ *
+ * Apply the same two changes to every other experiment file.
+ */
+
 import biologyData from "../../data/biology.json";
 import InstructionPanel from "../../components/InstructionPanel";
 import BackButton from "../../components/BackButton";
+import ExperimentChatbot from "../../components/ExperimentChatbot"; // ← NEW
 import Quiz from "../../components/Quiz";
 import ExperimentNotesPanel from "../../components/ExperimentNotesPanel";
 
@@ -23,11 +34,40 @@ const HumanBody = () => {
       <h1>{experiment.title}</h1>
       <p>{experiment.description}</p>
 
+      <div style={{ position: "relative", marginTop: "16px" }}>
+        <iframe
+          title={experiment.title}
+          src={`${experiment.modelUrl}?ui_infos=0&ui_controls=0&ui_stop=0&ui_help=0`}
+          width="100%"
+          height="500"
+          frameBorder="0"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          allowFullScreen
+          style={{ borderRadius: "12px" }}
+        />
       <SimulationViewer
         title={experiment.title}
         src={`${experiment.modelUrl}?ui_infos=0&ui_controls=0&ui_stop=0&ui_help=0`}
       />
 
+        {/* TOP MASK – hides Sketchfab title bar */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "48px",
+            background:
+              document.body.getAttribute("data-theme") === "dark"
+                ? "#020617"
+                : "#ffffff",
+            zIndex: 2,
+            borderTopLeftRadius: "12px",
+            borderTopRightRadius: "12px",
+          }}
+        />
+      </div>
 
       <InstructionPanel
         aim={experiment.aim}
@@ -38,6 +78,8 @@ const HumanBody = () => {
         precautions={experiment.precautions}
       />
 
+      {/* ---- AI Chatbot ---- */}
+      <ExperimentChatbot experiment={experiment} subject="biology" />  {/* ← NEW */}
       <Quiz experimentId="human-body" subject="biology" />
       <div style={{ marginTop: "24px" }}>
         <ExperimentNotesPanel experimentId="human-body" />

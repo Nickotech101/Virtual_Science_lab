@@ -1,0 +1,28 @@
+# Chatbot Integration – Quick Reference
+# Apply to every experiment file that doesn't already have the chatbot.
+#
+# TWO LINES TO ADD PER FILE:
+#
+#  1.  Import (top of file):
+#        import ExperimentChatbot from "../../components/ExperimentChatbot";
+#
+#  2.  JSX (just before the closing </div> of the page):
+#        <ExperimentChatbot experiment={experiment} subject="<SUBJECT>" />
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# FILE                                                  subject value
+# ─────────────────────────────────────────────────────────────────────────────
+# frontend/src/experiments/biology/Eye.jsx              "biology"
+# frontend/src/experiments/biology/Kidney.jsx           "biology"
+# frontend/src/experiments/biology/Mitochondria.jsx     "biology"
+# (HumanBody.jsx already updated – see outputs folder)
+#
+# frontend/src/experiments/chemistry/ChemistryEquipment.jsx   "chemistry"
+# frontend/src/experiments/chemistry/Condenser.jsx             "chemistry"
+# frontend/src/experiments/chemistry/VolcanoExperiment.jsx     "chemistry"
+#
+# frontend/src/experiments/physics/MagneticFieldDirection.jsx  "physics"
+# frontend/src/experiments/physics/MagneticFieldWires.jsx      "physics"
+# frontend/src/experiments/physics/ThumbRule.jsx               "physics"
+# frontend/src/experiments/physics/VelocityAcceleration.jsx    "physics"
+# ─────────────────────────────────────────────────────────────────────────────

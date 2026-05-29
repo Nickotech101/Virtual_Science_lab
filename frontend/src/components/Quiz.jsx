@@ -79,6 +79,17 @@ const Quiz = ({ experimentId, subject }) => {
 
   const handleSubmitScore = async () => {
     setSubmitting(true);
+
+    // 1. Prepare the history record
+    const historyRecord = {
+      user_id: "default-student", // Ensure this matches your auth user
+      experiment_name: experimentId, // Or a more descriptive title if available
+      subject: subject,
+      score: correctAnswers,
+      timestamp: new Date().toISOString()
+    };
+
+    // 2. Perform submission to gamification context
     const result = await submitQuiz(
       experimentId,
       correctAnswers,
@@ -86,6 +97,26 @@ const Quiz = ({ experimentId, subject }) => {
       selectedAnswers,
       questions.length
     );
+
+    // 3. Save to local IndexedDB
+    await offlineDb.saveExperimentHistory(historyRecord);
+
+    // 4. Queue for background sync if online/offline
+    await offlineDb.queueAction("experiment_history", historyRecord);
+
+    // 5. Attempt immediate API call if online
+    if (navigator.onLine) {
+      try {
+        await fetch(`${BASE_URL}/api/progress/history`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(historyRecord),
+        });
+      } catch (e) {
+        console.warn("Immediate history sync failed, queued for retry.", e);
+      }
+    }
+
     setSubmitting(false);
     setSubmitted(true);
     if (result) {

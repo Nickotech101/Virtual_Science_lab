@@ -50,3 +50,24 @@ def save_progress(payload: ExperimentProgressRequest):
         )
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Progress save error: {str(exc)}")
+
+# Add this new model to progress.py
+class ExperimentHistoryLog(BaseModel):
+    user_id: str
+    experiment_name: str
+    subject: str
+    score: int
+
+@router.post("/history")
+def log_experiment_history(payload: ExperimentHistoryLog):
+    # Logic to insert into 'experiment_history' collection in MongoDB
+    try:
+        # Assuming you have a progress_service method for this
+        return progress_service.log_experiment_history(payload)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+@router.get("/stats/{user_id}")
+def get_user_stats(user_id: str):
+    # Logic to aggregate progress bars (Physics/Chemistry/Biology)
+    return progress_service.get_aggregated_stats(user_id)

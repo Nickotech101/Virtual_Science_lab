@@ -117,3 +117,44 @@ def upsert_experiment_progress(
     )
 
     return get_user_experiment_progress(user_id)
+
+# ---------------------------------------------------------------------------
+# NEW: Experiment History & Stats Methods
+# ---------------------------------------------------------------------------
+
+def log_experiment_history(payload: dict):
+    """Stores a record in the 'experiment_history' collection."""
+    db = _get_db()
+    # Add timestamp if not provided in payload
+    data = payload.copy()
+    if "timestamp" not in data:
+        data["timestamp"] = datetime.now(timezone.utc).isoformat()
+        
+    db["experiment_history"].insert_one(data)
+    return {"status": "success"}
+
+def get_aggregated_stats(user_id: str) -> dict:
+    """Aggregates completion statistics by subject."""
+    db = _get_db()
+    
+    # Example aggregation: Calculates average score per subject
+    # Or counts distinct experiments completed per subject
+    pipeline = [
+        {"$match": {"user_id": user_id}},
+        {"$group": {
+            "_id": "$subject",
+            "avgScore": {"$avg": "$score"}
+        }}
+    ]
+    
+    results = list(db["experiment_history"].aggregate(pipeline))
+    
+    # Map to expected frontend format: { "Physics": 75, "Chemistry": 80, ... }
+    # Defaulting to 0 if no data
+    stats = {"physics": 0, "chemistry": 0, "biology": 0}
+    for item in results:
+        subject = item["_id"].lower()
+        if subject in stats:
+            stats[subject] = int(item["avgScore"] or 0)
+            
+    return stats

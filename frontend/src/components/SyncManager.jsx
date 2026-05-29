@@ -94,7 +94,11 @@ const SyncManager = () => {
       if (refreshProgress) await refreshProgress();
       if (refreshStats) await refreshStats();
 
-      const totalSynced = result.notes_synced + result.progress_synced + result.quizzes_synced;
+      const totalSynced = 
+        (result.notes_synced || 0) + 
+        (result.progress_synced || 0) + 
+        (result.quizzes_synced || 0) + 
+        (result.history_synced || 0);
       
       if (result.failed_actions > 0) {
         showToast(
