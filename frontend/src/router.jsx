@@ -19,6 +19,7 @@ import MyProgress from "./pages/MyProgress";
 import NotebookDashboard from "./pages/NotebookDashboard";
 import NotebookEditor from "./pages/NotebookEditor";
 import TeamSessionLobby from "./pages/TeamSessionLobby";
+import LeaderboardDashboard from "./pages/LeaderboardDashboard";
 
 const AppRouter = () => {
   return (
@@ -46,6 +47,7 @@ const AppRouter = () => {
         <Route path="/notebook" element={<NotebookDashboard />} />
         <Route path="/notebook/:experimentId" element={<NotebookEditor />} />
         <Route path="/collaborate" element={<TeamSessionLobby />} />
+        <Route path="/leaderboard" element={<LeaderboardDashboard />} />
       </Routes>
     </>
   );
