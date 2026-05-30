@@ -9,19 +9,17 @@ import Home from "./pages/Home";
 import Biology from "./pages/Biology";
 import Chemistry from "./pages/Chemistry";
 import Physics from "./pages/Physics";
-import Mathematics from "./pages/Mathematics";
-import ComputerScience from "./pages/ComputerScience";
-import EnvironmentalScience from "./pages/EnvironmentalScience";
-import Astronomy from "./pages/Astronomy";
-import Robotics from "./pages/Robotics";
-import Electronics from "./pages/Electronics";
-import ArtificialIntelligence from "./pages/ArtificialIntelligence";
-import Geography from "./pages/Geography";
-import Psychology from "./pages/Psychology";
+
 
 import Profile from "./pages/Profile";
 import ProgressDashboard from "./pages/ProgressDashboard";
+<<<<<<< Updated upstream
 import KnowledgeGraph from "./pages/KnowledgeGraph";
+=======
+import ReportHistory from "./pages/ReportHistory";
+import MyProgress from "./pages/MyProgress";
+import CareerExplorer from "./pages/CareerExplorer";
+>>>>>>> Stashed changes
 
 const AppRouter = () => {
   return (
@@ -38,33 +36,18 @@ const AppRouter = () => {
         <Route path="/biology/*" element={<Biology />} />
         <Route path="/chemistry/*" element={<Chemistry />} />
         <Route path="/physics/*" element={<Physics />} />
-        <Route path="/mathematics/*" element={<Mathematics />} />
-        <Route
-          path="/computer-science/*"
-          element={<ComputerScience />}
-        />
-        <Route
-          path="/environmental-science/*"
-          element={<EnvironmentalScience />}
-        />
 
-        {/* Advanced Subjects */}
-        <Route path="/astronomy/*" element={<Astronomy />} />
-        <Route path="/robotics/*" element={<Robotics />} />
-        <Route path="/electronics/*" element={<Electronics />} />
-        <Route
-          path="/artificial-intelligence/*"
-          element={<ArtificialIntelligence />}
-        />
-
-        {/* Social & Earth Sciences */}
-        <Route path="/geography/*" element={<Geography />} />
-        <Route path="/psychology/*" element={<Psychology />} />
 
         {/* User Pages */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/progress" element={<ProgressDashboard />} />
+<<<<<<< Updated upstream
         <Route path="/explore" element={<KnowledgeGraph />} />
+=======
+        <Route path="/reports" element={<ReportHistory />} />
+        <Route path="/my-progress" element={<MyProgress />} />
+        <Route path="/careers" element={<CareerExplorer />} />
+>>>>>>> Stashed changes
       </Routes>
     </>
   );
