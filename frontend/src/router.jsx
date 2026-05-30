@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 import BadgeNotification from "./components/BadgeNotification";
 import SyncManager from "./components/SyncManager";
@@ -28,7 +27,6 @@ const AppRouter = () => {
       <ParticipantPresence />
       <BadgeNotification />
       <SyncManager />
-
       <Routes>
         {/* Home */}
         <Route path="/" element={<Home />} />
