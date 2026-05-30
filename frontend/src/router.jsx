@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 import BadgeNotification from "./components/BadgeNotification";
 import SyncManager from "./components/SyncManager";
@@ -10,15 +9,15 @@ import Home from "./pages/Home";
 import Biology from "./pages/Biology";
 import Chemistry from "./pages/Chemistry";
 import Physics from "./pages/Physics";
-
 import Profile from "./pages/Profile";
 import ProgressDashboard from "./pages/ProgressDashboard";
 import KnowledgeGraph from "./pages/KnowledgeGraph";
 import ReportHistory from "./pages/ReportHistory";
 import MyProgress from "./pages/MyProgress";
+import TeamSessionLobby from "./pages/TeamSessionLobby";
+import CareerExplorer from "./pages/CareerExplorer";
 import NotebookDashboard from "./pages/NotebookDashboard";
 import NotebookEditor from "./pages/NotebookEditor";
-import TeamSessionLobby from "./pages/TeamSessionLobby";
 
 const AppRouter = () => {
   return (
@@ -27,7 +26,6 @@ const AppRouter = () => {
       <ParticipantPresence />
       <BadgeNotification />
       <SyncManager />
-
       <Routes>
         {/* Home */}
         <Route path="/" element={<Home />} />
@@ -46,6 +44,9 @@ const AppRouter = () => {
         <Route path="/notebook" element={<NotebookDashboard />} />
         <Route path="/notebook/:experimentId" element={<NotebookEditor />} />
         <Route path="/collaborate" element={<TeamSessionLobby />} />
+        <Route path="/careers" element={<CareerExplorer />} />
+        <Route path="/notebook" element={<NotebookDashboard />} />
+        <Route path="/notebook/:experimentId" element={<NotebookEditor />} />
       </Routes>
     </>
   );
