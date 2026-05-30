@@ -253,6 +253,7 @@ const Navbar = () => {
             border: "1px solid rgba(255,255,255,0.2)",
           }}
           to="/notebook"
+          to="/careers"
           onMouseOver={(e) =>
             (e.currentTarget.style.background = "rgba(255,255,255,0.22)")
           }
@@ -279,6 +280,9 @@ const Navbar = () => {
         >
           <span>🤝</span> Collaborate
         </Link>
+          Careers
+        </Link>
+
         <button
           onClick={toggleTheme}
           style={{

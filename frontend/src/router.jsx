@@ -11,6 +11,7 @@ import Biology from "./pages/Biology";
 import Chemistry from "./pages/Chemistry";
 import Physics from "./pages/Physics";
 
+
 import Profile from "./pages/Profile";
 import ProgressDashboard from "./pages/ProgressDashboard";
 import KnowledgeGraph from "./pages/KnowledgeGraph";
@@ -19,6 +20,7 @@ import MyProgress from "./pages/MyProgress";
 import NotebookDashboard from "./pages/NotebookDashboard";
 import NotebookEditor from "./pages/NotebookEditor";
 import TeamSessionLobby from "./pages/TeamSessionLobby";
+import CareerExplorer from "./pages/CareerExplorer";
 
 const AppRouter = () => {
   return (
@@ -37,6 +39,7 @@ const AppRouter = () => {
         <Route path="/chemistry/*" element={<Chemistry />} />
         <Route path="/physics/*" element={<Physics />} />
 
+
         {/* User Pages */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/progress" element={<ProgressDashboard />} />
@@ -46,6 +49,7 @@ const AppRouter = () => {
         <Route path="/notebook" element={<NotebookDashboard />} />
         <Route path="/notebook/:experimentId" element={<NotebookEditor />} />
         <Route path="/collaborate" element={<TeamSessionLobby />} />
+        <Route path="/careers" element={<CareerExplorer />} />
       </Routes>
     </>
   );
