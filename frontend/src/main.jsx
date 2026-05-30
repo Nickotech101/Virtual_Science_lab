@@ -10,6 +10,7 @@ import { ProgressProvider } from "./context/ProgressContext";
 import { NotesProvider } from "./context/NotesContext";
 import { NotebookProvider } from "./context/NotebookContext";
 import { PredictionProvider } from "./context/PredictionContext";
+import { CollaborationProvider } from "./context/CollaborationContext";
 import "./styles/globals.css";
 import "./index.css";
 import enableSparkleCursor from "./components/SparkleCursor";
@@ -49,9 +50,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <NotesProvider>
                 <NotebookProvider>
                   <PredictionProvider>
-                    <ReportsProvider>    
-                       <Root />
-                    </ReportsProvider>
+                    <CollaborationProvider>
+                      <ReportsProvider>    
+                         <Root />
+                      </ReportsProvider>
+                    </CollaborationProvider>
                   </PredictionProvider>
                 </NotebookProvider>
               </NotesProvider>

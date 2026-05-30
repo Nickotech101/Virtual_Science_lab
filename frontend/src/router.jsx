@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import BadgeNotification from "./components/BadgeNotification";
 import SyncManager from "./components/SyncManager";
+import ParticipantPresence from "./components/collaboration/ParticipantPresence";
 
 /* Main Pages */
 import Home from "./pages/Home";
@@ -17,11 +18,13 @@ import ReportHistory from "./pages/ReportHistory";
 import MyProgress from "./pages/MyProgress";
 import NotebookDashboard from "./pages/NotebookDashboard";
 import NotebookEditor from "./pages/NotebookEditor";
+import TeamSessionLobby from "./pages/TeamSessionLobby";
 
 const AppRouter = () => {
   return (
     <>
       <Navbar />
+      <ParticipantPresence />
       <BadgeNotification />
       <SyncManager />
 
@@ -42,6 +45,7 @@ const AppRouter = () => {
         <Route path="/my-progress" element={<MyProgress />} />
         <Route path="/notebook" element={<NotebookDashboard />} />
         <Route path="/notebook/:experimentId" element={<NotebookEditor />} />
+        <Route path="/collaborate" element={<TeamSessionLobby />} />
       </Routes>
     </>
   );

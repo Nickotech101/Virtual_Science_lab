@@ -11,6 +11,7 @@ from app.api.sync import router as sync_router
 from app.api.careers import router as careers_router
 from app.api.notebook import router as notebook_router
 from app.api.predictions import router as predictions_router
+from app.api.collaboration import router as collaboration_router
 
 
 app = FastAPI(
@@ -42,6 +43,7 @@ app.include_router(sync_router)
 app.include_router(careers_router)
 app.include_router(notebook_router)
 app.include_router(predictions_router)
+app.include_router(collaboration_router)
 
 
 @app.get("/")
