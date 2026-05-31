@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./router";
-import { ReportsProvider } from "./context/ReportsContext";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { OnlineStatusProvider } from "./context/OnlineStatusContext";
 import { GamificationProvider } from "./context/GamificationContext";
