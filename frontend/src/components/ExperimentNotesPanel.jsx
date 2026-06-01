@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNotes } from "../context/useNotes";
 import { useReports } from "../context/ReportsContext";
+import { useCollaboration } from "../context/CollaborationContext";
 import VirtualLabReportPreview from "./VirtualLabReportPreview";
+import CollaborativeNotesPanel from "./collaboration/CollaborativeNotesPanel";
+import SharedObservationBoard from "./collaboration/SharedObservationBoard";
 
 const DEBOUNCE_MS = 900;
 
@@ -53,6 +56,7 @@ const downloadFile = (filename, content, type) => {
 const ExperimentNotesPanel = ({ experimentId }) => {
   const { getNotes, refreshNotesForExperiment, upsertNotes, usingLocalFallback } = useNotes();
   const { generateReport } = useReports();
+  const { sessionCode } = useCollaboration();
 
   const [observations, setObservations] = useState("");
   const [conclusions, setConclusions] = useState("");
@@ -179,6 +183,15 @@ const ExperimentNotesPanel = ({ experimentId }) => {
     setGeneratingReport(false);
     setReportPreview(report);
   };
+
+  if (sessionCode) {
+    return (
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+        <CollaborativeNotesPanel />
+        <SharedObservationBoard />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">

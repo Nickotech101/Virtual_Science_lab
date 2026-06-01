@@ -120,6 +120,7 @@ class PredictionResponse(BaseModel):
     readiness_level: str
     reasons: List[str]
     recommendations: List[str]
+    tags: List[str] = []
 
 class AssistantHelpRequest(BaseModel):
     experiment_title: str
