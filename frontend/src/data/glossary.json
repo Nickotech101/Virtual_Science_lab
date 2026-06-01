@@ -1,0 +1,38 @@
+{
+  "mitochondria": {
+    "definition": "An organelle found in large numbers in most cells, in which the biochemical processes of respiration and energy production occur.",
+    "subject": "biology"
+  },
+  "retina": {
+    "definition": "A layer at the back of the eyeball containing cells that are sensitive to light and that trigger nerve impulses that pass via the optic nerve to the brain.",
+    "subject": "biology"
+  },
+  "cornea": {
+    "definition": "The transparent layer forming the front of the eye.",
+    "subject": "biology"
+  },
+  "titration": {
+    "definition": "A technique where a solution of known concentration is used to determine the concentration of an unknown solution.",
+    "subject": "chemistry"
+  },
+  "burette": {
+    "definition": "A graduated glass tube with a tap at one end, for delivering known volumes of a liquid, especially in titrations.",
+    "subject": "chemistry"
+  },
+  "velocity": {
+    "definition": "The speed of something in a given direction.",
+    "subject": "physics"
+  },
+  "acceleration": {
+    "definition": "Increase in the rate or speed of something.",
+    "subject": "physics"
+  },
+  "magnetic field": {
+    "definition": "A region around a magnetic material or a moving electric charge within which the force of magnetism acts.",
+    "subject": "physics"
+  },
+  "ph": {
+    "definition": "A figure expressing the acidity or alkalinity of a solution on a logarithmic scale on which 7 is neutral.",
+    "subject": "chemistry"
+  }
+}
