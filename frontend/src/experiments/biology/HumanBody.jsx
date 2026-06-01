@@ -1,9 +1,9 @@
 /**
- * HumanBody.jsx  (updated – adds ExperimentChatbot)
+ * HumanBody.jsx  (updated – adds LabAssistantPanel)
  *
  * CHANGE SUMMARY:
- *   + Import ExperimentChatbot
- *   + Add <ExperimentChatbot experiment={experiment} subject="biology" /> at bottom
+ *   + Import LabAssistantPanel
+ *   + Add <LabAssistantPanel experiment={experiment} subject="biology" /> at bottom
  *
  * Apply the same two changes to every other experiment file.
  */
@@ -11,7 +11,7 @@
 import biologyData from "../../data/biology.json";
 import InstructionPanel from "../../components/InstructionPanel";
 import BackButton from "../../components/BackButton";
-import ExperimentChatbot from "../../components/ExperimentChatbot"; // ← NEW
+import LabAssistantPanel from "../../components/LabAssistantPanel"; // ← NEW
 import Quiz from "../../components/Quiz";
 import ExperimentNotesPanel from "../../components/ExperimentNotesPanel";
 
@@ -79,7 +79,7 @@ const HumanBody = () => {
       />
 
       {/* ---- AI Chatbot ---- */}
-      <ExperimentChatbot experiment={experiment} subject="biology" />  {/* ← NEW */}
+      <LabAssistantPanel experiment={experiment} subject="biology" />  {/* ← NEW */}
       <Quiz experimentId="human-body" subject="biology" />
       <div style={{ marginTop: "24px" }}>
         <ExperimentNotesPanel experimentId="human-body" />

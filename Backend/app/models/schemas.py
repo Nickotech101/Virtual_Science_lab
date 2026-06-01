@@ -120,3 +120,25 @@ class PredictionResponse(BaseModel):
     readiness_level: str
     reasons: List[str]
     recommendations: List[str]
+
+class AssistantHelpRequest(BaseModel):
+    experiment_title: str
+    current_step: Optional[str] = None
+    user_question: str
+    student_notes: Optional[str] = None
+
+class AssistantHintRequest(BaseModel):
+    experiment_title: str
+    current_step: str
+    student_notes: Optional[str] = None
+
+class AssistantNotesAnalyzeRequest(BaseModel):
+    experiment_title: str
+    student_notes: str
+
+class AssistantSummaryRequest(BaseModel):
+    experiment_title: str
+    student_notes: str
+
+class AssistantResponse(BaseModel):
+    answer: str

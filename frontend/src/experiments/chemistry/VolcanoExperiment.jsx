@@ -1,7 +1,7 @@
 import chemistryData from "../../data/chemistry.json";
 import InstructionPanel from "../../components/InstructionPanel";
 import BackButton from "../../components/BackButton";
-import ExperimentChatbot from "../../components/ExperimentChatbot";
+import LabAssistantPanel from "../../components/LabAssistantPanel";
 
 const VolcanoExperiment = () => {
 
@@ -51,7 +51,7 @@ const VolcanoExperiment = () => {
         precautions={experiment.precautions}
       />
 
-      <ExperimentChatbot experiment={experiment} subject="chemistry" />
+      <LabAssistantPanel experiment={experiment} subject="chemistry" />
       <Quiz experimentId="volcano-experiment" subject="chemistry" />
       <div style={{ marginTop: "24px" }}>
         <ExperimentNotesPanel experimentId="volcano-experiment" />

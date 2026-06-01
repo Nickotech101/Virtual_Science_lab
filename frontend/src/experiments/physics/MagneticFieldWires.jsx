@@ -1,7 +1,7 @@
 import physicsData from "../../data/physics.json";
 import InstructionPanel from "../../components/InstructionPanel";
 import BackButton from "../../components/BackButton";
-import ExperimentChatbot from "../../components/ExperimentChatbot";
+import LabAssistantPanel from "../../components/LabAssistantPanel";
 
 const MagneticFieldWires = () => {
 
@@ -51,7 +51,7 @@ const MagneticFieldWires = () => {
         precautions={experiment.precautions}
       />
 
-      <ExperimentChatbot experiment={experiment} subject="physics" />
+      <LabAssistantPanel experiment={experiment} subject="physics" />
       <Quiz experimentId="magnetic-field-wires" subject="physics" />
       <div style={{ marginTop: "24px" }}>
         <ExperimentNotesPanel experimentId="magnetic-field-wires" />

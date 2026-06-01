@@ -1,3 +1,5 @@
+import ExperimentHintButton from "./ExperimentHintButton";
+
 const InstructionPanel = ({
   aim,
   theory,
@@ -32,6 +34,7 @@ const InstructionPanel = ({
               <li key={index}>{step}</li>
             ))}
           </ol>
+          <ExperimentHintButton />
         </>
       )}
 
