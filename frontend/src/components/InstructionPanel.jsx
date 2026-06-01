@@ -1,5 +1,6 @@
 import ExperimentHintButton from "./ExperimentHintButton";
 import TTSButton from "./TTSButton";
+import { parseGlossary } from "../utils/glossaryParser";
 
 const InstructionPanel = ({
   aim,
@@ -18,7 +19,7 @@ const InstructionPanel = ({
           <h3 style={{ display: "flex", alignItems: "center" }}>
             Aim <TTSButton text={aim} ariaLabel="Read aim" />
           </h3>
-          <p>{aim}</p>
+          <p>{parseGlossary(aim)}</p>
         </>
       )}
 
@@ -27,7 +28,7 @@ const InstructionPanel = ({
           <h3 style={{ display: "flex", alignItems: "center" }}>
             Theory <TTSButton text={theory} ariaLabel="Read theory" />
           </h3>
-          <p>{theory}</p>
+          <p>{parseGlossary(theory)}</p>
         </>
       )}
 
@@ -38,7 +39,7 @@ const InstructionPanel = ({
           </h3>
           <ol>
             {procedure.map((step, index) => (
-              <li key={index}>{step}</li>
+              <li key={index}>{parseGlossary(step)}</li>
             ))}
           </ol>
           <ExperimentHintButton />
@@ -50,7 +51,7 @@ const InstructionPanel = ({
           <h3 style={{ display: "flex", alignItems: "center" }}>
             Observation <TTSButton text={observation} ariaLabel="Read observation" />
           </h3>
-          <p>{observation}</p>
+          <p>{parseGlossary(observation)}</p>
         </>
       )}
 
@@ -59,7 +60,7 @@ const InstructionPanel = ({
           <h3 style={{ display: "flex", alignItems: "center" }}>
             Result <TTSButton text={result} ariaLabel="Read result" />
           </h3>
-          <p>{result}</p>
+          <p>{parseGlossary(result)}</p>
         </>
       )}
 
@@ -70,7 +71,7 @@ const InstructionPanel = ({
           </h3>
           <ul>
             {precautions.map((item, index) => (
-              <li key={index}>{item}</li>
+              <li key={index}>{parseGlossary(item)}</li>
             ))}
           </ul>
         </>
