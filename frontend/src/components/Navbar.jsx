@@ -181,7 +181,6 @@ const Navbar = () => {
             border: "1px solid rgba(255,255,255,0.2)",
           }}
           to="/notebook"
-          to="/careers"
           onMouseOver={(e) =>
             (e.currentTarget.style.background = "rgba(255,255,255,0.22)")
           }
@@ -272,8 +271,9 @@ const Navbar = () => {
           onClick={toggleTheme}
           style={{ border: "none", background: "rgba(255,255,255,0.15)", color: "white", cursor: "pointer", fontSize: "18px", padding: "10px 14px", borderRadius: "10px" }}
           title="Toggle theme"
+          aria-label="Toggle theme mode"
         >
-          {theme === "light" ? "🌙" : "☀️"}
+          {theme === "light" ? "🌙" : theme === "dark" ? "🔲" : "☀️"}
         </button>
       </div>
     </nav>

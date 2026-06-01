@@ -124,6 +124,8 @@ export default function LabAssistantPanel({ experiment, subject }) {
       <button
         onClick={() => setIsOpen((v) => !v)}
         aria-label={isOpen ? "Close AI assistant" : "Open AI assistant"}
+        aria-expanded={isOpen}
+        aria-controls="assistant-chat-window"
         style={{
           position: "fixed",
           bottom: "24px",

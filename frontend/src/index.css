@@ -687,3 +687,54 @@ body[data-theme="dark"] .rec-badge {
 body[data-theme="dark"] .difficulty-Beginner { background: rgba(22, 165, 74, 0.2); color: #86efac; }
 body[data-theme="dark"] .difficulty-Intermediate { background: rgba(234, 179, 8, 0.2); color: #fde047; }
 body[data-theme="dark"] .difficulty-Advanced { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+/* ---------- HIGH CONTRAST MODE ---------- */
+body[data-theme="high-contrast"] {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  --card-bg: #000000;
+  --text-muted: #ffff00;
+}
+
+body[data-theme="high-contrast"] * {
+  border-color: #ffffff !important;
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="high-contrast"] a,
+body[data-theme="high-contrast"] button,
+body[data-theme="high-contrast"] .rec-action {
+  color: #00ffff !important;
+  background-color: #000000 !important;
+  border: 2px solid #00ffff !important;
+  border-radius: 0 !important;
+}
+
+body[data-theme="high-contrast"] .experiment-card,
+body[data-theme="high-contrast"] .tracker-panel,
+body[data-theme="high-contrast"] .tracker-stats-grid article,
+body[data-theme="high-contrast"] .rec-card {
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 0 !important;
+}
+
+body[data-theme="high-contrast"] h1,
+body[data-theme="high-contrast"] h2,
+body[data-theme="high-contrast"] h3,
+body[data-theme="high-contrast"] p,
+body[data-theme="high-contrast"] span,
+body[data-theme="high-contrast"] strong {
+  color: #ffff00 !important;
+}
+
+body[data-theme="high-contrast"] .progress-status-pill,
+body[data-theme="high-contrast"] .rec-badge,
+body[data-theme="high-contrast"] .rec-difficulty {
+  background-color: #000000 !important;
+  color: #00ff00 !important;
+  border: 2px solid #00ff00 !important;
+}

@@ -15,7 +15,7 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
-    if (theme === "dark") {
+    if (theme === "dark" || theme === "high-contrast") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
@@ -27,7 +27,11 @@ export const ThemeProvider = ({ children }) => {
   }, [sparkleEnabled]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setTheme((prev) => {
+      if (prev === "light") return "dark";
+      if (prev === "dark") return "high-contrast";
+      return "light";
+    });
   };
 
   const toggleSparkle = () => {
