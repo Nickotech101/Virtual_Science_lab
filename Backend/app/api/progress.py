@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/progress", tags=["progress"])
 
 
 class ExperimentProgressRequest(BaseModel):
-    user_id: str = Field(default="default-student")
+    user_id: str = Field(..., description="ID of the user submitting progress")
     experiment_id: str
     subject: str
     title: str
