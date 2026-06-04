@@ -95,7 +95,9 @@ const ReportHistory = () => {
                 className="flex flex-col gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <strong className="block text-slate-900 dark:text-slate-100">{experiment.title}</strong>
+                  <strong className="block text-slate-900 dark:text-slate-100">
+                    {experiment.title}
+                  </strong>
                   <span className="text-sm font-semibold text-slate-500">
                     {formatSubject(experiment.subject)} | {history.length} previous reports
                   </span>
@@ -137,21 +139,34 @@ const ReportHistory = () => {
 
         <div className="tracker-history">
           {filteredReports.length === 0 ? (
-            <p className="tracker-empty">No reports yet. Generate one from a completed experiment.</p>
+            <div className="tracker-empty">
+              <h3>No reports available</h3>
+              <p>
+                {usingLocalFallback
+                  ? "You are offline. Showing saved reports from local storage."
+                  : "Generate a new report from a completed experiment to get started."}
+              </p>
+            </div>
           ) : (
             filteredReports.map((report) => {
-              const experiment = EXPERIMENT_CATALOG.find((item) => item.id === report.experiment_id);
+              const experiment = EXPERIMENT_CATALOG.find(
+                (item) => item.id === report.experiment_id
+              );
               return (
                 <div className="tracker-history-item" key={report.id}>
                   <div>
                     <strong>{report.title}</strong>
                     <span>
-                      {formatSubject(report.subject)} - {formatDate(report.updated_at)} - {report.status}
+                      {formatSubject(report.subject)} - {formatDate(report.updated_at)} -{" "}
+                      {report.status}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {experiment && (
-                      <Link to={experiment.link} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 no-underline hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
+                      <Link
+                        to={experiment.link}
+                        className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 no-underline hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                      >
                         Experiment
                       </Link>
                     )}

@@ -74,16 +74,21 @@ export const ReportsProvider = ({ children }) => {
       const res = await fetch(`${BASE_URL}/api/reports/${USER_ID}`);
       if (!res.ok) throw new Error("Reports API unavailable");
       const data = await res.json();
-      setReports(data);
+      const safeReports = Array.isArray(data) ? data : [];
+      setReports(safeReports);
+      writeLocalReports(safeReports);
+
       writeLocalReports(data);
       setUsingLocalFallback(false);
       return data;
-    } catch {
-      const local = readLocalReports();
-      setReports(local);
-      setUsingLocalFallback(true);
-      return local;
-    } finally {
+    }catch (err) {
+        console.error("Error fetching reports:", err);
+        const local = readLocalReports();
+        setReports(local);
+        setUsingLocalFallback(true);
+        return local;
+    }
+ finally {
       setLoading(false);
     }
   }, []);
