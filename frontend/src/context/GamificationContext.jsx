@@ -279,8 +279,8 @@ export const GamificationProvider = ({ children }) => {
   }, [isOnline, xp, completedQuizzes, unlockedBadges, scheduleDebouncedPersistence]);
 
   const clearAchievement = useCallback(() => {
-    setAchievement(null);
-  };
+  setAchievement(null);
+}, []);  
 
   // Memoized dependency context objects to prevent reference thrashing
   const telemetryContextValue = useMemo(() => ({
