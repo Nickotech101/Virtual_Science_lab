@@ -1,23 +1,52 @@
+import bleach
 from typing import List, Dict, Any
 from datetime import datetime
 from app.services import notes_service, progress_service, gamification_service
 
+# -------------------------------------------------------------------------
+# 🔒 HIGH-SPEED SYNC LAYER SANITIZATION UTILITIES
+# -------------------------------------------------------------------------
+
+def _deep_nosql_operator_block(data: Any) -> None:
+    """
+    Recursively audits dict payloads inside sync matrices.
+    Throws ValueError instantly if a MongoDB command operator block ($) is passed.
+    """
+    if isinstance(data, dict):
+        for k, v in data.items():
+            if isinstance(k, str) and k.startswith("$"):
+                raise ValueError(f"Prohibited injection operator key vector: {k}")
+            _deep_nosql_operator_block(v)
+    elif isinstance(data, list):
+        for item in data:
+            _deep_nosql_operator_block(item)
+
+def _sanitize_primitive_string(val: Any) -> str:
+    """
+    Forces casting to plain primitive string, running clean layers 
+    to neutralize stored script/iframe triggers.
+    """
+    if val is None:
+        return ""
+    str_val = str(val)
+    return bleach.clean(str_val, tags=[], attributes={}, strip=True)
+
+# -------------------------------------------------------------------------
+# 🔄 SECURED OFFLINE ACTIONS PIPELINE
+# -------------------------------------------------------------------------
+
 def sync_offline_actions(actions: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Process a list of offline sync actions in chronological order.
-    
-    Action format:
-    {
-        "id": str,
-        "type": "notes" | "progress" | "quiz",
-        "payload": dict,
-        "timestamp": str (ISO 8601 UTC)
-    }
+    Fully protected against NoSQL Injection and Cross-Site Scripting payloads.
     """
-    # Sort actions by their client-side timestamp to apply them in correct chronological order
     def get_timestamp(act):
-        return act.get("timestamp") or ""
+        return str(act.get("timestamp") or "")
     
+    # 1. Ensure structural boundary isolation on input sequence
+    if not isinstance(actions, list):
+        return {"notes_synced": 0, "progress_synced": 0, "quizzes_synced": 0, "failed_actions": 1, "errors": ["Invalid actions root topology"]}
+
     sorted_actions = sorted(actions, key=get_timestamp)
     
     results = {
@@ -29,30 +58,33 @@ def sync_offline_actions(actions: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
     
     for action in sorted_actions:
-        action_type = action.get("type")
+        if not isinstance(action, dict):
+            results["failed_actions"] += 1
+            continue
+            
+        action_type = _sanitize_primitive_string(action.get("type"))
         payload = action.get("payload", {})
-        timestamp = action.get("timestamp")
+        timestamp = _sanitize_primitive_string(action.get("timestamp"))
         
         try:
+            # 2. Crash Defense & Operator Scanner Check
+            _deep_nosql_operator_block(payload)
+            
             if action_type == "notes":
-                user_id = payload.get("user_id")
-                experiment_id = payload.get("experiment_id")
-                observations = payload.get("observations")
-                conclusions = payload.get("conclusions")
-                learnings = payload.get("learnings")
-                notes = payload.get("notes")
-                client_updated_at = payload.get("updated_at") or timestamp
+                user_id = _sanitize_primitive_string(payload.get("user_id"))
+                experiment_id = _sanitize_primitive_string(payload.get("experiment_id"))
+                observations = _sanitize_primitive_string(payload.get("observations")) if payload.get("observations") is not None else None
+                conclusions = _sanitize_primitive_string(payload.get("conclusions")) if payload.get("conclusions") is not None else None
+                learnings = _sanitize_primitive_string(payload.get("learnings")) if payload.get("learnings") is not None else None
+                notes = _sanitize_primitive_string(payload.get("notes")) if payload.get("notes") is not None else None
+                client_updated_at = _sanitize_primitive_string(payload.get("updated_at") or timestamp)
                 
-                # Retrieve existing note to check conflict (Last-Write-Wins)
                 existing = notes_service.get_user_experiment_notes(user_id, experiment_id)
                 
                 if existing and existing.get("updated_at"):
-                    # Check if database note is newer
-                    if existing["updated_at"] > client_updated_at:
-                        # Database is newer, skip syncing client note to prevent overwriting newer changes
+                    if str(existing["updated_at"]) > client_updated_at:
                         continue
                 
-                # Upsert note with client timestamp
                 notes_service.upsert_user_experiment_notes(
                     user_id=user_id,
                     experiment_id=experiment_id,
@@ -65,35 +97,38 @@ def sync_offline_actions(actions: List[Dict[str, Any]]) -> Dict[str, Any]:
                 results["notes_synced"] += 1
                 
             elif action_type == "progress":
-                user_id = payload.get("user_id")
-                experiment_id = payload.get("experiment_id")
-                subject = payload.get("subject")
-                title = payload.get("title")
-                completed = payload.get("completed", True)
+                user_id = _sanitize_primitive_string(payload.get("user_id"))
+                experiment_id = _sanitize_primitive_string(payload.get("experiment_id"))
+                subject_raw = _sanitize_primitive_string(payload.get("subject"))
+                title = _sanitize_primitive_string(payload.get("title"))
+                completed = bool(payload.get("completed", True))
                 score = payload.get("score")
+                safe_score = int(score) if score is not None else None
                 
                 progress_service.upsert_experiment_progress(
                     user_id=user_id,
                     experiment_id=experiment_id,
-                    subject=subject.lower() if subject else "",
+                    subject=subject_raw.lower(),
                     title=title,
                     completed=completed,
-                    score=score
+                    score=safe_score
                 )
                 results["progress_synced"] += 1
                 
             elif action_type == "quiz":
-                user_id = payload.get("user_id")
-                experiment_id = payload.get("experiment_id")
-                score = payload.get("score")
-                total_questions = payload.get("total_questions", 5)
-                subject = payload.get("subject")
-                selected_answers = payload.get("selected_answers", [])
-                attempted_at = payload.get("attempted_at") or timestamp
+                user_id = _sanitize_primitive_string(payload.get("user_id"))
+                experiment_id = _sanitize_primitive_string(payload.get("experiment_id"))
+                score = int(payload.get("score", 0))
+                total_questions = int(payload.get("total_questions", 5))
+                subject_raw = _sanitize_primitive_string(payload.get("subject"))
+                attempted_at = _sanitize_primitive_string(payload.get("attempted_at") or timestamp)
                 
-                # Check for duplicate attempt (exact timestamp match) to prevent double XP / badges
+                # Protect elements inside native payload array
+                raw_answers = payload.get("selected_answers", [])
+                selected_answers = [_sanitize_primitive_string(ans) for ans in raw_answers] if isinstance(raw_answers, list) else []
+                
                 existing_attempts = gamification_service.get_quiz_attempts(user_id, experiment_id)
-                is_duplicate = any(att.get("attempted_at") == attempted_at for att in existing_attempts)
+                is_duplicate = any(str(att.get("attempted_at")) == attempted_at for att in existing_attempts)
                 
                 if not is_duplicate:
                     gamification_service.complete_quiz(
@@ -101,14 +136,11 @@ def sync_offline_actions(actions: List[Dict[str, Any]]) -> Dict[str, Any]:
                         experiment_id=experiment_id,
                         score=score,
                         total_questions=total_questions,
-                        subject=subject.lower() if subject else "",
+                        subject=subject_raw.lower(),
                         selected_answers=selected_answers,
                         attempted_at=attempted_at
                     )
                     results["quizzes_synced"] += 1
-                else:
-                    # Silently ignore duplicate
-                    pass
                     
             else:
                 results["failed_actions"] += 1
