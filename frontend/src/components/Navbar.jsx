@@ -254,7 +254,6 @@ const Navbar = () => {
         >
           🏆 Leaderboard
         </Link>
-
         <Link
           style={{
             ...linkStyle,
@@ -272,7 +271,15 @@ const Navbar = () => {
           🧪 SimLab Sandbox
         </Link>
 
+        <Link
           style={linkStyle}
+          to="/mathematics"
+          onMouseOver={(e) => (e.target.style.background = "rgba(255,255,255,0.15)")}
+          onMouseOut={(e) => (e.target.style.background = "transparent")}
+        >
+          Mathematics
+        </Link>
+       
           to="/mathematics"
           onMouseOver={(e) => (e.target.style.background = "rgba(255,255,255,0.15)")}
           onMouseOut={(e) => (e.target.style.background = "transparent")}
