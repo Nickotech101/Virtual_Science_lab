@@ -246,6 +246,23 @@ const Navbar = () => {
           🏆 Leaderboard
         </Link>
 
+        <Link
+          style={{
+            ...linkStyle,
+            background: "rgba(255,255,255,0.12)",
+            border: "1px solid rgba(255,255,255,0.2)",
+          }}
+          to="/sandbox"
+          onMouseOver={(e) =>
+            (e.currentTarget.style.background = "rgba(255,255,255,0.22)")
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.background = "rgba(255,255,255,0.12)")
+          }
+        >
+          🧪 SimLab Sandbox
+        </Link>
+
         <button
           onClick={toggleTheme}
           style={{ border: "none", background: "rgba(255,255,255,0.15)", color: "white", cursor: "pointer", fontSize: "18px", padding: "10px 14px", borderRadius: "10px" }}
