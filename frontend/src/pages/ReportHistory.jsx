@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import VirtualLabReportPreview from "../components/VirtualLabReportPreview";
 import { useReports } from "../context/ReportsContext";
+import { useReviews } from "../context/ReviewsContext";
 import { EXPERIMENT_CATALOG, SUBJECTS } from "../data/experiments";
 
 const formatDate = (value) => {
@@ -20,7 +21,9 @@ const formatSubject = (subject) => subject.charAt(0).toUpperCase() + subject.sli
 
 const ReportHistory = () => {
   const { reports, loading, usingLocalFallback, generateReport, exportMarkdown } = useReports();
+  const { publishReport } = useReviews();
   const [selectedReport, setSelectedReport] = useState(null);
+  const [publishStatus, setPublishStatus] = useState({});
   const [generatingId, setGeneratingId] = useState(null);
   const [subjectFilter, setSubjectFilter] = useState("all");
 
@@ -46,6 +49,22 @@ const ReportHistory = () => {
     const report = await generateReport(experimentId);
     setGeneratingId(null);
     setSelectedReport(report);
+  };
+
+  const handlePublish = async (report) => {
+    try {
+      setPublishStatus(prev => ({ ...prev, [report.id]: "publishing" }));
+      await publishReport(report.user_id, report.id);
+      setPublishStatus(prev => ({ ...prev, [report.id]: "published" }));
+      setTimeout(() => {
+        setPublishStatus(prev => ({ ...prev, [report.id]: null }));
+      }, 3000);
+    } catch (err) {
+      setPublishStatus(prev => ({ ...prev, [report.id]: "error" }));
+      setTimeout(() => {
+        setPublishStatus(prev => ({ ...prev, [report.id]: null }));
+      }, 3000);
+    }
   };
 
   if (loading) {
@@ -183,6 +202,20 @@ const ReportHistory = () => {
                       className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-500"
                     >
                       MD
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePublish(report)}
+                      disabled={publishStatus[report.id] === "publishing" || publishStatus[report.id] === "published"}
+                      className={`rounded-lg px-3 py-2 text-sm font-bold text-white transition ${
+                        publishStatus[report.id] === "published" ? "bg-green-500" :
+                        publishStatus[report.id] === "error" ? "bg-red-500" :
+                        "bg-indigo-500 hover:bg-indigo-400 disabled:opacity-70"
+                      }`}
+                    >
+                      {publishStatus[report.id] === "published" ? "Published!" : 
+                       publishStatus[report.id] === "publishing" ? "Publishing..." :
+                       publishStatus[report.id] === "error" ? "Failed" : "Publish"}
                     </button>
                   </div>
                 </div>

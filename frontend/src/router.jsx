@@ -3,12 +3,15 @@ import Navbar from "./components/Navbar";
 import BadgeNotification from "./components/BadgeNotification";
 import SyncManager from "./components/SyncManager";
 import ParticipantPresence from "./components/collaboration/ParticipantPresence";
+import ScientificCalculatorWidget from "./components/ScientificCalculatorWidget";
 
 /* Main Pages */
 import Home from "./pages/Home";
 import Biology from "./pages/Biology";
 import Chemistry from "./pages/Chemistry";
 import Physics from "./pages/Physics";
+import Mathematics from "./pages/Mathematics";
+
 
 import Profile from "./pages/Profile";
 import ProgressDashboard from "./pages/ProgressDashboard";
@@ -24,6 +27,7 @@ import Login from "./pages/Login";
 import FAQ from "./pages/FAQ";
 import Policy from "./pages/Policy";
 import Sandbox from "./pages/Sandbox";
+import ClassroomFeed from "./pages/ClassroomFeed";
 
 const AppRouter = () => {
   return (
@@ -32,6 +36,7 @@ const AppRouter = () => {
       <ParticipantPresence />
       <BadgeNotification />
       <SyncManager />
+      <ScientificCalculatorWidget />
       <Routes>
         {/* Home */}
         <Route path="/" element={<Home />} />
@@ -40,6 +45,7 @@ const AppRouter = () => {
         <Route path="/biology/*" element={<Biology />} />
         <Route path="/chemistry/*" element={<Chemistry />} />
         <Route path="/physics/*" element={<Physics />} />
+        <Route path="/mathematics/*" element={<Mathematics />} />
 
         {/* User Pages */}
         <Route path="/profile" element={<Profile />} />
@@ -56,6 +62,7 @@ const AppRouter = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/policy" element={<Policy />} />
         <Route path="/sandbox" element={<Sandbox />} />
+        <Route path="/classroom-feed" element={<ClassroomFeed />} />
       </Routes>
     </>
   );

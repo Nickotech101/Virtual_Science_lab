@@ -192,3 +192,52 @@ class AssistantSummaryRequest(BaseModel):
 
 class AssistantResponse(BaseModel):
     answer: str
+
+
+class RubricScores(BaseModel):
+    accuracy: int = Field(..., ge=1, le=5)
+    detail: int = Field(..., ge=1, le=5)
+    formatting: int = Field(..., ge=1, le=5)
+
+
+class ReviewSubmitRequest(BaseModel):
+    user_id: SanitizedStr
+    rating: int = Field(..., ge=1, le=5)
+    rubric_scores: RubricScores
+    comment: SanitizedStr
+
+
+class CommentSubmitRequest(BaseModel):
+    user_id: SanitizedStr
+    text: SanitizedStr
+
+
+class ReportPublishRequest(BaseModel):
+    user_id: SanitizedStr
+    report_id: int
+
+
+class ReviewResponse(BaseModel):
+    user_id: str
+    rating: int
+    rubric_scores: dict
+    comment: str
+    timestamp: str
+
+
+class CommentResponse(BaseModel):
+    user_id: str
+    text: str
+    timestamp: str
+
+
+class ClassroomReportResponse(BaseModel):
+    id: str
+    original_report_id: int
+    user_id: str
+    title: str
+    subject: str
+    content: dict
+    published_at: str
+    reviews: List[ReviewResponse] = []
+    comments: List[CommentResponse] = []
