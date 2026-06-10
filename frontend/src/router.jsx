@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import BadgeNotification from "./components/BadgeNotification";
 import SyncManager from "./components/SyncManager";
 import ParticipantPresence from "./components/collaboration/ParticipantPresence";
+import ScientificCalculatorWidget from "./components/ScientificCalculatorWidget";
 
 /* Main Pages */
 import Home from "./pages/Home";
@@ -31,6 +32,7 @@ const AppRouter = () => {
       <ParticipantPresence />
       <BadgeNotification />
       <SyncManager />
+      <ScientificCalculatorWidget />
       <Routes>
         {/* Home */}
         <Route path="/" element={<Home />} />
