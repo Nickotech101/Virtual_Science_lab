@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Biology from "./pages/Biology";
 import Chemistry from "./pages/Chemistry";
 import Physics from "./pages/Physics";
+import Mathematics from "./pages/Mathematics";
+
 
 import Profile from "./pages/Profile";
 import ProgressDashboard from "./pages/ProgressDashboard";
@@ -41,6 +43,7 @@ const AppRouter = () => {
         <Route path="/biology/*" element={<Biology />} />
         <Route path="/chemistry/*" element={<Chemistry />} />
         <Route path="/physics/*" element={<Physics />} />
+        <Route path="/mathematics/*" element={<Mathematics />} />
 
         {/* User Pages */}
         <Route path="/profile" element={<Profile />} />
