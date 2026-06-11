@@ -129,6 +129,7 @@ const Sandbox = () => {
     if (sandboxMode === "physics") {
       drawPhysicsFrame();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [physicsAngle, physicsTargetDist, physicsGravity, sandboxMode]);
 
   const drawPhysicsFrame = () => {
@@ -314,6 +315,7 @@ const Sandbox = () => {
     if (sandboxMode === "chemistry") {
       drawChemistryFrame();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chemBaseAdded, chemIndicator, sandboxMode]);
 
   const drawChemistryFrame = () => {
@@ -425,6 +427,7 @@ const Sandbox = () => {
     if (chemSimulating && chemBaseAdded < 50) {
       ctx.fillStyle = "#3b82f6";
       ctx.beginPath();
+      // eslint-disable-next-line react-hooks/purity
       ctx.arc(buretLeft + 8, 285 + ((Date.now() % 200) / 200) * 25, 3, 0, Math.PI * 2);
       ctx.fill();
     }
