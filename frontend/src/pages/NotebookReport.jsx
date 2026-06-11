@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 // src/pages/NotebookReport.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
