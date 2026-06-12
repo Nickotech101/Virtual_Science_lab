@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";

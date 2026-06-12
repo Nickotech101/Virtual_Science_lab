@@ -9,7 +9,7 @@ export default function ClassroomFeed() {
   const [filter, setFilter] = useState("all");
   const [selectedReport, setSelectedReport] = useState(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [mockUserId] = useState(`student_${Math.floor(Math.random() * 1000)}`); // Simulated current user
+  const [mockUserId] = useState(() => `student_${Math.floor(Math.random() * 1000)}`); // Simulated current user
 
   useEffect(() => {
     fetchFeed(filter);

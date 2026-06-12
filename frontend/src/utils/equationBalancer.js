@@ -50,7 +50,6 @@ export function balanceEquation(equationStr) {
 
     // Brute force limits
     const MAX_COEF = 15;
-    const stack = [];
     let solution = null;
 
     function search(depth, currentCoefs) {

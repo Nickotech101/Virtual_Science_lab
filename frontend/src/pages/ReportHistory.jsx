@@ -59,7 +59,7 @@ const ReportHistory = () => {
       setTimeout(() => {
         setPublishStatus(prev => ({ ...prev, [report.id]: null }));
       }, 3000);
-    } catch (err) {
+    } catch {
       setPublishStatus(prev => ({ ...prev, [report.id]: "error" }));
       setTimeout(() => {
         setPublishStatus(prev => ({ ...prev, [report.id]: null }));
