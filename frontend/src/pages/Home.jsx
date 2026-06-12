@@ -233,7 +233,7 @@ const Home = () => {
             Interactive Core Labs
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 title: "Biology",
@@ -258,6 +258,14 @@ const Home = () => {
                 barClass: "bg-purple-500",
                 hoverClass: "group-hover:text-purple-500",
                 linkClass: "text-purple-500",
+              },
+              {
+                title: "SimLab Sandbox",
+                link: "/sandbox",
+                description: "Interactive gravity & titration formula simulators",
+                barClass: "bg-indigo-500",
+                hoverClass: "group-hover:text-indigo-500",
+                linkClass: "text-indigo-500",
               },
             ].map((subject) => (
               <Link
