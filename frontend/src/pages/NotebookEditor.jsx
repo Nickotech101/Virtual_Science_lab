@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useNotebook } from "../context/NotebookContext";
 import { EXPERIMENT_CATALOG } from "../data/experiments";
 import BackButton from "../components/BackButton";
@@ -125,6 +125,18 @@ const NotebookEditor = () => {
                 </>
               )}
             </div>
+            <Link 
+              to={`/notebook/${experimentId}/rich`}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2"
+            >
+              <span>📝</span> Rich Editor
+            </Link>
+            <Link 
+              to={`/notebook/${experimentId}/report`}
+              className="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm flex items-center gap-2"
+            >
+              <span>📄</span> Report
+            </Link>
             <button 
               onClick={() => setShowHistory(true)}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-sm flex items-center gap-2"
