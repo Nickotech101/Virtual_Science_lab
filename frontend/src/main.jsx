@@ -11,6 +11,7 @@ import { NotebookProvider } from "./context/NotebookContext";
 import { PredictionProvider } from "./context/PredictionContext";
 import { CollaborationProvider } from "./context/CollaborationContext";
 import { ReportsProvider } from "./context/ReportsContext";
+import { ReviewsProvider } from "./context/ReviewsContext";
 import "./styles/globals.css";
 import "./index.css";
 import enableSparkleCursor from "./components/SparkleCursor";
@@ -45,7 +46,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                   <PredictionProvider>
                     <CollaborationProvider>
                       <ReportsProvider>
-                        <Root />
+                        <ReviewsProvider>
+                          <Root />
+                        </ReviewsProvider>
                       </ReportsProvider>
                     </CollaborationProvider>
                   </PredictionProvider>

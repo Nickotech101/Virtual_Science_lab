@@ -12,6 +12,7 @@ import Physics from "./pages/Physics";
 import FAQ from "./pages/FAQ";
 import Policy from "./pages/Policy";
 import NotFound from "./pages/NotFound";
+import Mathematics from "./pages/Mathematics";
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
             <Route path="/biology/*" element={<Biology />} />
             <Route path="/chemistry/*" element={<Chemistry />} />
             <Route path="/physics/*" element={<Physics />} />
-
+            <Route path="/mathematics/*" element={<Mathematics />} />
             {/* FAQ */}
             <Route path="/faq" element={<FAQ />} />
 
