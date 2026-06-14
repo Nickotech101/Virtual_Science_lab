@@ -9,7 +9,6 @@ from app.models.schemas import (
 )
 from app.services import reports_service
 
-reports_service.init_db()
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
@@ -68,7 +67,6 @@ from app.models.schemas import (
 )
 from app.services import reports_service
 
-reports_service.init_db()
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 

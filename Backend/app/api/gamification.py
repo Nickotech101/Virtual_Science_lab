@@ -3,8 +3,6 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Optional
 from app.services import gamification_service
 
-# Initialize the SQLite database on module import
-gamification_service.init_db()
 
 router = APIRouter(prefix="/api/gamification", tags=["gamification"])
 

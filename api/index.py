@@ -1,13 +1,18 @@
 import sys
 import os
 
-# Add BOTH the repo root AND the Backend folder to sys.path
-# Repo root  → lets Python find the 'Backend' package
-# Backend/   → lets Backend/main.py do 'from app.api.routes import router'
-repo_root = os.path.join(os.path.dirname(__file__), "..")
-backend_dir = os.path.join(repo_root, "Backend")
+# Resolve paths relative to this file so they work regardless of CWD
+_here = os.path.dirname(os.path.abspath(__file__))
+_repo_root = os.path.dirname(_here)
+_backend_dir = os.path.join(_repo_root, "Backend")
 
-sys.path.insert(0, os.path.abspath(repo_root))
-sys.path.insert(0, os.path.abspath(backend_dir))
+# Insert Backend/ first so 'from app.xxx import ...' resolves correctly
+if _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
 
-from Backend.main import app  # noqa: F401
+# Import the FastAPI 'app' object.
+# Because Backend/ is on sys.path, main.py's own imports
+# ("from app.api.routes import router") all resolve without a package prefix.
+from main import app  # noqa: F401
