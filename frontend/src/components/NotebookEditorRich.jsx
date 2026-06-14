@@ -2,8 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // src/components/NotebookEditorRich.jsx
 import React, { useState, useEffect } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 import { useParams } from "react-router-dom";
 import { useNotebook } from "../context/NotebookContext";
 import ReportButton from "../components/ReportButton";
