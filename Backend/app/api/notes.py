@@ -7,7 +7,6 @@ from app.models.schemas import ExperimentNotesResponse, ExperimentNotesUpsertReq
 from app.services import notes_service
 
 # Initialize the SQLite database on module import
-notes_service.init_db()
 
 router = APIRouter(prefix="/api/notes", tags=["notes"])
 

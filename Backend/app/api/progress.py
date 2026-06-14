@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 
 from app.services import progress_service
 
-progress_service.init_db()
 
 router = APIRouter(prefix="/api/progress", tags=["progress"])
 

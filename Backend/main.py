@@ -48,6 +48,26 @@ app.include_router(predictions_router)
 app.include_router(assistant_router)
 app.include_router(collaboration_router)
 app.include_router(leaderboard_router)
+
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """
+    Catch-all handler that returns a structured JSON error.
+    CORS headers are already attached by CORSMiddleware before this runs,
+    so the browser will never see a bare 503 without Access-Control-Allow-Origin.
+    """
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error", "error": str(exc)},
+    )
+
 @app.get("/")
 def root():
     return {"status": "Backend is running 🚀"}
+
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
