@@ -279,13 +279,6 @@ const Navbar = () => {
         >
           Mathematics
         </Link>
-       
-          to="/mathematics"
-          onMouseOver={(e) => (e.target.style.background = "rgba(255,255,255,0.15)")}
-          onMouseOut={(e) => (e.target.style.background = "transparent")}
-        >
-          Mathematics
-        </Link>
 
 
         <button
